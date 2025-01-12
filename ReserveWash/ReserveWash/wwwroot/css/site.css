@@ -1,10 +1,11 @@
-html {
+﻿html {
   font-size: 14px;
 }
 
 @media (min-width: 768px) {
   html {
-    font-size: 16px;
+    font-size: 14px;
+    font-family: IRANSans;
   }
 }
 
@@ -14,5 +15,62 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; 
+    margin: 0; 
+}
+
+.reserve-wash-logo{
+    border : 0px;
+    border-radius : 12px;
+}
+
+.main-layout-page-body{
+    margin-top:120px;
+}
+
+.login-btn {
+    color:snow !important;
+    background-color: #81B6B8 !important;
+}
+.row {
+    display: flex;
+    flex-wrap: wrap; 
+}
+
+.col-lg-4 {
+    flex: 0 0 33.33%; 
+    max-width: 33.33%; 
+    padding: 10px;
+}
+
+.card {
+    height: 100%; 
+}
+
+.front-background {
+    width: 100%;
+}
+
+.footer {
+    background-color: #333; 
+    color: white; 
+    text-align: center;
+    padding: 10px 0; 
+    height : 100px;
+}
+
+.footer {
+    background-color: #333; /* رنگ پس‌زمینه فوتر */
+    color: white; /* رنگ متن فوتر */
+    text-align: center; /* متن را وسط چیدمان می‌کند */
+    padding: 20px 0; /* فاصله داخلی فوتر */
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}
+.carwash-countainer{
+    margin-top:70px;
 }

@@ -1,8 +1,52 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@model List<ReserveWash.ViewModels.Product.CarWashViewModel>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@{
+    ViewData["Title"] = "صفحه اصلی";
+}
+@*<div class="col-lg-4 ms-auto me-auto p-lg-4 mt-lg-0 mt-4">
+        <div class="rotating-card-container">
+          <div class="card card-rotate card-background card-background-mask-primary shadow-dark mt-md-0 mt-5">
+            <div class="front front-background" style="background-image: url(https://images.unsplash.com/photo-1569683795645-b62e50fbf103?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80); background-size: cover;">
+              <div class="card-body py-7 text-center">
+                <i class="material-symbols-rounded text-white text-4xl my-3">touch_app</i>
+                <h3 class="text-white">کارواش <br /> تستی 1</h3>
+                <p class="text-white opacity-8">لورم ایپسوم از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است، و برای شرایط فعلی تکنولوژی مورد نیاز، و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد، کتابهای زیادی در شصت و سه درصد گذشته حال و آینده، شام و دشواری موجود در ارائه راهکارهد.</p>
+              </div>
+            </div>
+            <div class="back back-background" style="background-image: url(https://images.unsplash.com/photo-1498889444388-e67ea62c464b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1365&q=80); background-size: cover;">
+              <div class="card-body pt-7 text-center">
+                <h3 class="text-white">تستی 1</h3>
+                <p class="text-white opacity-8">لورم ایپسوم از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است، و برای شرایط فعلی تکنولوژی مورد نیاز، و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد، کتابهای زیادی در شصت و سه درصد گذشته حال و آینده، شام و دشواری موجود در ارائه راهکارهد.</p>
+                <a href=".//sections/page-sections/hero-sections.html" target="_blank" class="btn bg-gradient-success btn-sm w-50 mx-auto mt-3">رزرو</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>*@
+
+
+    <div class="row">
+        @foreach (var item in Model)
+        {
+        <div class="col-lg-3 carwash-countainer">
+            <div class="rotating-card-container">
+                <div class="card card-rotate card-background card-background-mask-primary shadow-dark mt-md-0 mt-5">
+                    <div class="front front-background" style="background-image: url(https://images.unsplash.com/photo-1569683795645-b62e50fbf103?ixlib=rb-1.2.1&auto=format&fit=crop&w=987&q=80); background-size: cover;">
+                        <div class="card-body py-7 text-center">
+                            <i class="material-symbols-rounded text-white text-4xl my-3">touch_app</i>
+                            <h3 class="text-white">کارواش <br />@item.Name</h3>
+                            <p class="text-white opacity-8">@item.Address</p>
+                        </div>
+                    </div>
+                    <div class="back back-background" style="background-image: url(https://images.unsplash.com/photo-1498889444388-e67ea62c464b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1365&q=80); background-size: cover;">
+                        <div class="card-body pt-7 text-center">
+                            <h3 class="text-white">تستی 1</h3>
+                            <p class="text-white opacity-8">لورم ایپسوم از طراحان گرافیک است...</p>
+                            <a href="#" target="_blank" class="btn bg-gradient-success btn-sm w-50 mx-auto mt-3">رزرو</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
+    </div>

@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Mapster;
+using Microsoft.AspNetCore.Mvc;
 using ReserveWash.Models;
+using ReserveWash.Repository.Contracts;
+using ReserveWash.Repository.Services;
+using ReserveWash.ViewModels.Product;
 using System.Diagnostics;
 
 namespace ReserveWash.Controllers
@@ -7,26 +11,26 @@ namespace ReserveWash.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly CarwashService _carwashService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, CarwashService carwashservice)
         {
             _logger = logger;
+            _carwashService = carwashservice;
         }
 
-        public IActionResult Index()
+        // Carwash
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var carwashes = await _carwashService.GetAllAsync();
+            var carwashesDto = carwashes.ToList().Adapt<List<CarWashViewModel>>();
+            return View(carwashesDto); // ارسال محصولات به ویو
         }
+
 
         public IActionResult Privacy()
         {
             return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

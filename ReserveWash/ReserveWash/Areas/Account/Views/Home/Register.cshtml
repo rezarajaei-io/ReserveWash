@@ -1,0 +1,30 @@
+﻿@model ReserveWash.ViewModels.Auth.RegisterViewModel
+
+<h2>ثبت نام</h2>
+
+<form method="post" asp-action="Register">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+   <div>
+       <label asp-for="Email"></label>
+       <input asp-for="Email" name="Email"/>
+       <span asp-validation-for="Email"></span>
+   </div>
+   <div>
+       <label asp-for="FullName"></label>
+       <input asp-for="FullName" name="FullName" />
+       <span asp-validation-for="FullName"></span>
+   </div>
+   <div>
+       <label asp-for="Password"></label>
+       <input asp-for="Password" type="password" name="Password" />
+       <span asp-validation-for="Password"></span>
+   </div>
+   <div>
+       <label asp-for="ConfirmPassword"></label>
+       <input asp-for="ConfirmPassword" type="password" name="ConfirmPassword" />
+       <span asp-validation-for="ConfirmPassword"></span>
+   </div>
+   <button type="submit">ثبت نام</button>
+</form>
+
+<a asp-action="Login">به صفحه ورود بروید</a>
