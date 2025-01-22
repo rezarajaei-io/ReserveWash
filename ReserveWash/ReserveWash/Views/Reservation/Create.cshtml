@@ -1,0 +1,71 @@
+﻿@model ReserveWash.ViewModels.Product.ReserveTimeViewModel
+
+@{
+    ViewData["Title"] = "تنظیم نوبت جدید";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<link rel="stylesheet" href=@("https://unpkg.com/@majidh1/jalalidatepicker/dist/jalalidatepicker.min.css")>
+<script type="text/javascript" src=@("https://unpkg.com/@majidh1/jalalidatepicker/dist/jalalidatepicker.min.js")></script>
+<link href="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.1/dist/css/persian-datepicker.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.1/dist/js/persian-datepicker.min.js"></script>
+
+<div class="container mt-4">
+    <h1>تنظیم نوبت جدید</h1>
+
+    <hr />
+    
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <input type="hidden" asp-for="CarwashId" value="@ViewBag.Id"/>
+                <input type="hidden" asp-for="Id" value=0/>
+                <input id="ServiceId" type="hidden" asp-for="ServiceId"/>
+                <input class="disabled" asp-for="CarwashName" value="@ViewBag.CarwashName"/>
+
+                <div class="form-group">
+                    <label asp-for="ReservationDateFa" class="control-label"></label>
+                    <input id="ReservationDateFa" asp-for="ReservationDateFa" placeholder="تاریخ رزرو را وارد کنید" data-jdp>
+                    
+                    <span asp-validation-for="ReservationDateFa" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ReservationTime" class="control-label"></label>
+                    <input asp-for="ReservationTime" class="form-control col-md-2 border rounded" placeholder="زمان رزرو" />
+                    <span asp-validation-for="ReservationDateFa" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label for="customerName">انتخاب نوع خدمت</label>
+                    <select name="ServicesList" id="ServicesList" class="form-control" asp-items="@(new SelectList(ViewBag.Services, "Value", "Text"))"></select>
+                </div>
+                <br />
+                <div class="form-group">
+                    <input type="submit" id="formsubmitbtn" value="ایجاد" class="btn btn-success btn-block" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a class="btn btn-secondary mt-3" asp-action="Index">بازگشت به لیست</a>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<script>
+    $(function() {
+    jalaliDatepicker.startWatch();
+    jalaliDatepicker.show(input);
+});
+
+$('#formsubmitbtn').on('click', function(){
+    alert(1);
+    var servicesListId = $('#ServicesList option:selected').val();
+    alert(servicesListId);
+    $('#ServiceId').val(servicesListId);
+})
+</script>

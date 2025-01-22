@@ -89,8 +89,7 @@ namespace ReserveWash.Controllers
         }
 
         // GET: /Account/Logout
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpGet]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();

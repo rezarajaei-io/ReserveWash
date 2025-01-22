@@ -1,14 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using ReserveWash.Middlewares;
 using ReserveWash.Repository.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// DI
-//builder.Services.AddScoped<IUserService, UserService>(); // Scoped: یک نمونه برای هر درخواست
-builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>)); // Scoped: یک نمونه برای هر درخواست
-builder.Services.AddScoped<CarwashService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -30,6 +27,16 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
+
+#region Dependency Injection ( DI )
+//builder.Services.AddScoped<IUserService, UserService>(); // Scoped: یک نمونه برای هر درخواست
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>)); // Scoped: یک نمونه برای هر درخواست
+builder.Services.AddScoped<CarwashService>();
+builder.Services.AddScoped<CarService>();
+builder.Services.AddScoped<ReservationService>();
+builder.Services.AddScoped<ReserveTimeService>();
+builder.Services.AddScoped<ServiceRepository>();
+#endregion
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -45,16 +52,11 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
+app.UseMiddleware<PersianCultureMiddleware>();
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-//app.UseEndpoints(endpoints =>
-//{
-//    endpoints.MapAreaControllerRoute(
-//        name: "Account",
-//        areaName: "Account",
-//        pattern: "Account/{controller=Account}/{action=Login}");
-//});
 
 app.Run();

@@ -1,0 +1,52 @@
+﻿@model ReserveWash.ViewModels.Product.CarViewModel
+
+@{
+    ViewData["Title"] = "ویرایش رزرو";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <h1>ویرایش کارواش</h1>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                
+                <input type="hidden" asp-for="Id" />
+
+                <div class="form-group">
+                    <label asp-for="CarModel" class="control-label"></label>
+                    <input asp-for="CarModel" class="form-control border rounded" placeholder="مدل ماشین را وارد کنید" />
+                    <span asp-validation-for="CarModel" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Brand" class="control-label"></label>
+                    <input asp-for="Brand" class="form-control border rounded" placeholder="نام ماشین را وارد کنید" />
+                    <span asp-validation-for="Brand" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Pelak" class="control-label"></label>
+                    <input asp-for="Pelak" class="form-control border rounded" placeholder="پلاک ماشین را وارد کنید" />
+                    <span asp-validation-for="Pelak" class="text-danger"></span>
+                </div>
+                <br />
+                <div class="form-group">
+                    <input type="submit" value="ذخیره" class="btn btn-primary btn-block" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a class="btn btn-secondary mt-3" asp-action="Index">بازگشت به لیست</a>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

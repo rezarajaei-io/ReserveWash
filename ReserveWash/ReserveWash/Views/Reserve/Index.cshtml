@@ -1,0 +1,48 @@
+﻿@model IEnumerable<ReserveWash.ViewModels.Product.ReservationViewModel>
+
+@{
+    ViewData["Title"] = "لیست رزرو ‌ها";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <h1>لیست رزرو ‌ها</h1>
+
+   
+    
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.CarwashName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ReserveDateFa)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ServiceName)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CarwashName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ReserveDateFa)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ServiceName)
+                </td>
+                <td>
+                    <a class="btn btn-info btn-sm" asp-action="Details" asp-route-id="@item.Id">جزئیات</a> |
+                    <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@item.Id">حذف</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

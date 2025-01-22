@@ -31,189 +31,200 @@
 </head>
 <body>
     <header>
-       <nav class="navbar navbar-expand-lg  blur border-radius-xl top-0 z-index-fixed shadow position-absolute my-3 p-2 start-0 end-0 mx-4">
-  <div class="container-fluid px-0">
-    <a class="navbar-brand font-weight-bolder ms-sm-3 text-sm" asp-controller="Home" asp-action="Index" rel="tooltip" title="Home" data-placement="bottom">
-      <img src="~/img/ReservewashLogo.png" width="40px" height="40px" class="reserve-wash-logo"/>
-    </a>
-    <button class="navbar-toggler shadow-none ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon mt-2">
-        <span class="navbar-toggler-bar bar1"></span>
-        <span class="navbar-toggler-bar bar2"></span>
-        <span class="navbar-toggler-bar bar3"></span>
-      </span>
-    </button>
-    <div class="collapse navbar-collapse pt-3 pb-2 py-lg-0 w-100" id="navigation">
-      <ul class="navbar-nav navbar-nav-hover ms-auto">
-        <li class="nav-item dropdown dropdown-hover mx-2">
-          <a class="nav-link ps-2 d-flex cursor-pointer align-items-center font-weight-semibold" id="dropdownMenuPages" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="material-symbols-rounded opacity-6 me-2 text-md">dashboard</i>
-            دنبال چی میگردی؟
-          </a>
-          <div class="dropdown-menu dropdown-menu-animation ms-n3 dropdown-md p-3 border-radius-xl mt-0 mt-lg-3" aria-labelledby="dropdownMenuPages">
-            <div class="d-none d-lg-block">
-  <h6 class="dropdown-header text-dark font-weight-bolder d-flex align-items-center px-1">
-    Landing Pages
-  </h6>
-  <a href="./pages/about-us.html" class="dropdown-item border-radius-md">
-    <span>About Us</span>
-  </a>
-  <a href="./pages/contact-us.html" class="dropdown-item border-radius-md">
-    <span>Contact Us</span>
-  </a>
-  <a href="./pages/author.html" class="dropdown-item border-radius-md">
-    <span>Author</span>
-  </a>
-  <h6 class="dropdown-header text-dark font-weight-bolder d-flex align-items-center px-1 mt-3">
-    Account
-  </h6>
-  <a href="./pages/sign-in.html" class="dropdown-item border-radius-md">
-    <span>Sign In</span>
-  </a>
-</div>
+        <nav class="navbar navbar-expand-lg  blur border-radius-xl top-0 z-index-fixed shadow position-absolute my-3 p-2 start-0 end-0 mx-4">
+            <div class="container-fluid px-0">
+                <a class="navbar-brand font-weight-bolder ms-sm-3 text-sm" asp-controller="Home" asp-action="Index" rel="tooltip" title="Home" data-placement="bottom">
+                    <img src="~/img/ReservewashLogo.png" width="40px" height="40px" class="reserve-wash-logo" />
+                </a>
+                <button class="navbar-toggler shadow-none ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon mt-2">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </span>
+                </button>
+                <div class="collapse navbar-collapse pt-3 pb-2 py-lg-0 w-100" id="navigation">
+                    <ul class="navbar-nav navbar-nav-hover ms-auto">
+                        <li class="nav-item dropdown dropdown-hover mx-2">
+                            <a class="nav-link ps-2 d-flex cursor-pointer align-items-center font-weight-semibold" id="dropdownMenuPages" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="material-symbols-rounded opacity-6 me-2 text-md">dashboard</i>
+                                دنبال چی میگردی؟
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-animation ms-n3 dropdown-md p-3 border-radius-xl mt-0 mt-lg-3" aria-labelledby="dropdownMenuPages">
+                                <div class="d-none d-lg-block">
+                                    <h6 class="dropdown-header text-dark font-weight-bolder d-flex align-items-center px-1">
+                                        Landing Pages
+                                    </h6>
+                                    <a href="./pages/about-us.html" class="dropdown-item border-radius-md">
+                                        <span>About Us</span>
+                                    </a>
+                                    <a href="./pages/contact-us.html" class="dropdown-item border-radius-md">
+                                        <span>Contact Us</span>
+                                    </a>
+                                    <a href="./pages/author.html" class="dropdown-item border-radius-md">
+                                        <span>Author</span>
+                                    </a>
+                                    <h6 class="dropdown-header text-dark font-weight-bolder d-flex align-items-center px-1 mt-3">
+                                        Account
+                                    </h6>
+                                    <a href="./pages/sign-in.html" class="dropdown-item border-radius-md">
+                                        <span>Sign In</span>
+                                    </a>
+                                </div>
 
-<div class="d-lg-none" dir="rtl">
-  <h6 class="dropdown-header text-dark font-weight-bolder d-flex align-items-center px-1">
-    صفحات
-  </h6>
+                                <div class="d-lg-none" dir="rtl">
+                                    <h6 class="dropdown-header text-dark font-weight-bolder d-flex align-items-center px-1">
+                                        صفحات
+                                    </h6>
 
-  <a href="./pages/about-us.html" class="dropdown-item border-radius-md">
-    <span>کارواش های </span>
-  </a>
-  <a href="./pages/contact-us.html" class="dropdown-item border-radius-md">
-    <span>Contact Us</span>
-  </a>
-  <a href="./pages/author.html" class="dropdown-item border-radius-md">
-    <span>Author</span>
-  </a>
+                                    <a href="./pages/about-us.html" class="dropdown-item border-radius-md">
+                                        <span>کارواش های </span>
+                                    </a>
+                                    <a href="./pages/contact-us.html" class="dropdown-item border-radius-md">
+                                        <span>Contact Us</span>
+                                    </a>
+                                    <a href="./pages/author.html" class="dropdown-item border-radius-md">
+                                        <span>Author</span>
+                                    </a>
 
-  <h6 class="dropdown-header text-dark font-weight-bolder d-flex align-items-center px-1 mt-3">
-    Account
-  </h6>
-  <a href="./pages/sign-in.html" class="dropdown-item border-radius-md">
-    <span>Sign In</span>
-  </a>
+                                    <h6 class="dropdown-header text-dark font-weight-bolder d-flex align-items-center px-1 mt-3">
+                                        Account
+                                    </h6>
+                                    <a href="./pages/sign-in.html" class="dropdown-item border-radius-md">
+                                        <span>Sign In</span>
+                                    </a>
 
-</div>
+                                </div>
 
-</div>
-        </li>
+                            </div>
+                        </li>
 
-        <li class="nav-item dropdown dropdown-hover mx-2">
-          
-          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-animation dropdown-md dropdown-md-responsive p-3 border-radius-lg mt-0 mt-lg-3" aria-labelledby="dropdownMenuBlocks">
-            <div class="d-none d-lg-block">
+                        <li class="nav-item dropdown dropdown-hover mx-2">
 
-  <li class="nav-item dropdown dropdown-hover dropdown-subitem">
-    <a class="dropdown-item py-2 ps-3 border-radius-md" href="./presentation.html">
-      <div class="w-100 d-flex align-items-center justify-content-between">
-        <div>
-          <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Attention Catchers</h6>
-          <span class="text-sm">See all examples</span>
-        </div>
-        <img src="./assets/img/down-arrow.svg" alt="down-arrow" class="arrow">
-      </div>
-    </a>
-    <div class="dropdown-menu mt-0 py-3 px-2 mt-3">
-      <a class="dropdown-item ps-3 border-radius-md mb-1" href="./sections/attention-catchers/alerts.html">
-        Alerts
-      </a>
-      <a class="dropdown-item ps-3 border-radius-md mb-1" href="./sections/attention-catchers/modals.html">
-        Modals
-      </a>
-      <a class="dropdown-item ps-3 border-radius-md mb-1" href="./sections/attention-catchers/tooltips-popovers.html">
-        Tooltips & Popovers
-      </a>
-    </div>
-  </li>
+                            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-animation dropdown-md dropdown-md-responsive p-3 border-radius-lg mt-0 mt-lg-3" aria-labelledby="dropdownMenuBlocks">
+                                <div class="d-none d-lg-block">
 
-  <li class="nav-item dropdown dropdown-hover dropdown-subitem">
-    <a class="dropdown-item py-2 ps-3 border-radius-md" href="./presentation.html">
-      <div class="w-100 d-flex align-items-center justify-content-between">
-        <div>
-          <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Elements</h6>
-          <span class="text-sm">See all elements</span>
-        </div>
+                                <li class="nav-item dropdown dropdown-hover dropdown-subitem">
+                                    <a class="dropdown-item py-2 ps-3 border-radius-md" href="./presentation.html">
+                                        <div class="w-100 d-flex align-items-center justify-content-between">
+                                            <div>
+                                                <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Attention Catchers</h6>
+                                                <span class="text-sm">See all examples</span>
+                                            </div>
+                                            <img src="./assets/img/down-arrow.svg" alt="down-arrow" class="arrow">
+                                        </div>
+                                    </a>
+                                    <div class="dropdown-menu mt-0 py-3 px-2 mt-3">
+                                        <a class="dropdown-item ps-3 border-radius-md mb-1" href="./sections/attention-catchers/alerts.html">
+                                            Alerts
+                                        </a>
+                                        <a class="dropdown-item ps-3 border-radius-md mb-1" href="./sections/attention-catchers/modals.html">
+                                            Modals
+                                        </a>
+                                        <a class="dropdown-item ps-3 border-radius-md mb-1" href="./sections/attention-catchers/tooltips-popovers.html">
+                                            Tooltips & Popovers
+                                        </a>
+                                    </div>
+                                </li>
 
-        <img src="./assets/img/down-arrow.svg" alt="down-arrow" class="arrow">
-      </div>
-    </a>
-    
-  </li>
-</div>
+                                <li class="nav-item dropdown dropdown-hover dropdown-subitem">
+                                    <a class="dropdown-item py-2 ps-3 border-radius-md" href="./presentation.html">
+                                        <div class="w-100 d-flex align-items-center justify-content-between">
+                                            <div>
+                                                <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Elements</h6>
+                                                <span class="text-sm">See all elements</span>
+                                            </div>
+
+                                            <img src="./assets/img/down-arrow.svg" alt="down-arrow" class="arrow">
+                                        </div>
+                                    </a>
+
+                                </li>
+                </div>
 
 
-          </ul>
-        </li>
+                </ul>
+                </li>
 
-        <li class="nav-item dropdown dropdown-hover mx-2">
-         
-          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-animation dropdown-md dropdown-md-responsive mt-0 mt-lg-3 p-3 border-radius-lg" aria-labelledby="dropdownMenuDocs">
-            <div class="d-none d-lg-block"><div>
+                <li class="nav-item dropdown dropdown-hover mx-2">
 
-</div>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-animation dropdown-md dropdown-md-responsive mt-0 mt-lg-3 p-3 border-radius-lg" aria-labelledby="dropdownMenuDocs">
+                        <div class="d-none d-lg-block">
+                            <div>
+                            </div>
 
-<div class="row d-lg-none">
-  <div class="col-md-12 g-0">
-    <a class="dropdown-item py-2 ps-3 border-radius-md" href="./pages/about-us.html">
-      <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Getting Started</h6>
-      <span class="text-sm">All about overview, quick start, license and contents</span>
-    </a>
+                            <div class="row d-lg-none">
+                                <div class="col-md-12 g-0">
+                                    <a class="dropdown-item py-2 ps-3 border-radius-md" href="./pages/about-us.html">
+                                        <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Getting Started</h6>
+                                        <span class="text-sm">All about overview, quick start, license and contents</span>
+                                    </a>
 
-    <a class="dropdown-item py-2 ps-3 border-radius-md" href="./pages/about-us.html">
-      <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Foundation</h6>
-      <span class="text-sm">See our colors, icons and typography</span>
-    </a>
+                                    <a class="dropdown-item py-2 ps-3 border-radius-md" href="./pages/about-us.html">
+                                        <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Foundation</h6>
+                                        <span class="text-sm">See our colors, icons and typography</span>
+                                    </a>
 
-    <a class="dropdown-item py-2 ps-3 border-radius-md" href="./pages/about-us.html">
-      <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Components</h6>
-      <span class="text-sm">Explore our collection of fully designed components</span>
-    </a>
+                                    <a class="dropdown-item py-2 ps-3 border-radius-md" href="./pages/about-us.html">
+                                        <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Components</h6>
+                                        <span class="text-sm">Explore our collection of fully designed components</span>
+                                    </a>
 
-    <a class="dropdown-item py-2 ps-3 border-radius-md" href="./pages/about-us.html">
-      <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Plugins</h6>
-      <span class="text-sm">Check how you can integrate our plugins</span>
-    </a>
+                                    <a class="dropdown-item py-2 ps-3 border-radius-md" href="./pages/about-us.html">
+                                        <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Plugins</h6>
+                                        <span class="text-sm">Check how you can integrate our plugins</span>
+                                    </a>
 
-    <a class="dropdown-item py-2 ps-3 border-radius-md" href="./pages/about-us.html">
-      <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Utility Classes</h6>
-      <span class="text-sm">For those who want flexibility, use our utility classes</span>
-    </a>
-  </div>
-</div>
+                                    <a class="dropdown-item py-2 ps-3 border-radius-md" href="./pages/about-us.html">
+                                        <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Utility Classes</h6>
+                                        <span class="text-sm">For those who want flexibility, use our utility classes</span>
+                                    </a>
+                                </div>
+                            </div>
 
-          </ul>
-        </li>
-        <li class="nav-item ms-lg-auto">
-          <a class="nav-link nav-link-icon me-2" asp-controller="Account" asp-action="Login" target="_blank">
-            <i class="fa fa-github me-1"></i>
-            <p class="d-inline text-sm z-index-1 font-weight-semibold" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Login">ورود</p>
-          </a>
-        </li>
-        <li class="nav-item my-auto ms-3 ms-lg-0">
-          
-          <a asp-controller="Account" asp-action="Register" class="btn bg-gradient-success mb-0 mt-2 mt-md-0">ثبت نام</a>
-          
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
+                    </ul>
+                </li>
+                @if (User.Identity.IsAuthenticated)
+                {
+                      <li class="nav-item my-auto ms-3 ms-lg-0">
+                        <a asp-controller="Account" asp-action="Logout" class="btn bg-gradient-danger mb-0 mt-2 mt-md-0">خروج</a>
+                      </li>
+
+                    <p style="margin-right : 50px;">@User.Identity.Name سلام</p>
+                }
+                else
+                {
+                    <li class="nav-item ms-lg-auto">
+                        <a class="nav-link nav-link-icon me-2" asp-controller="Account" asp-action="Login" target="_blank">
+                            <i class="fa fa-github me-1"></i>
+                            <p class="d-inline text-sm z-index-1 font-weight-semibold" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Login">ورود</p>
+                        </a>
+                    </li>
+                <li class="nav-item my-auto ms-3 ms-lg-0">
+
+                    <a asp-controller="Account" asp-action="Register" class="btn bg-gradient-success mb-0 mt-2 mt-md-0">ثبت نام</a>
+
+                </li>
+                }
+                </ul>
+            </div>
+            </div>
+        </nav>
     </header>
-    <div class="container main-layout-page-body">
+    <div class="container main-layout-page-body" dir="rtl">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 </body>
 
-    <footer class="border-top footer text-muted" dir="rtl">
-        <div class="container">
-            تمامی حقوق متعلق به رزرو واش میباشد زمستان 1403&copy;
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+<footer class="border-top footer text-muted" dir="rtl">
+    <div class="container">
+        تمامی حقوق متعلق به رزرو واش میباشد زمستان 1403&copy;
+    </div>
+</footer>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
 </html>

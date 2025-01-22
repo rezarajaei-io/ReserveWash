@@ -9,7 +9,10 @@ namespace ReserveWash.Models
         public string CarModel { get; set; }
         [MaxLength(128, ErrorMessage = "برند نمیتواند بیشتر از 128 کاراکتر باشد")]
         public string Brand { get; set; }
-        public string UserId { get; set; } // کلید خارجی به ApplicationUser
+        [MaxLength(128, ErrorMessage = "پلاک نمیتواند بیشتر از 128 کاراکتر باشد")]
+        public string Pelak { get; set; } = "0";
+        public string UserId { get; set; }
+
         public ApplicationUser User { get; set; } // ناوبری به کاربر
     }
 }

@@ -18,6 +18,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Feedback> Feedback { get; set; }
     public DbSet<Reservation> Reservation { get; set; }
     public DbSet<Service> Service { get; set; }
+    public DbSet<ReserveTime> ReserveTime { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -26,11 +27,41 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         modelBuilder.Entity<Carwash>()
             .HasMany(c => c.Services)
             .WithOne(s => s.Carwash)
-            .HasForeignKey(s => s.CarwashId);
+            .HasForeignKey(s => s.CarwashId)
+            .OnDelete(DeleteBehavior.NoAction); // یا Restrict
+
+        modelBuilder.Entity<ReserveTime>()
+            .HasOne(c => c.Service)
+            .WithMany(s => s.ReserveTime)
+            .HasForeignKey(s => s.ServiceId)
+            .OnDelete(DeleteBehavior.NoAction); // یا Restrict
+
+        modelBuilder.Entity<ReserveTime>()
+           .HasOne(c => c.Carwash)
+           .WithMany(s => s.ReserveTime)
+           .HasForeignKey(s => s.CarwashId)
+           .OnDelete(DeleteBehavior.NoAction); // یا Restrict
 
         modelBuilder.Entity<Carwash>()
             .HasMany(c => c.Feedbacks)
             .WithOne(f => f.Carwash)
-            .HasForeignKey(f => f.CarwashId);
+            .HasForeignKey(f => f.CarwashId)
+            .OnDelete(DeleteBehavior.NoAction); // یا Restrict
+
+        modelBuilder.Entity<Carwash>()
+            .HasOne(c => c.User)
+            .WithMany() // اگر User به Carwash اشاره نمی‌کند
+            .HasForeignKey("UserId")
+            .OnDelete(DeleteBehavior.NoAction); // یا 
+
+        modelBuilder.Entity<Car>()
+         .HasOne(c => c.User)
+         .WithMany() // اگر User به Carwash اشاره نمی‌کند
+         .HasForeignKey("UserId")
+         .OnDelete(DeleteBehavior.NoAction); // یا 
+
     }
+
+
+    public DbSet<ReserveWash.ViewModels.Product.CarWashViewModel>? CarWashViewModel { get; set; }
 }

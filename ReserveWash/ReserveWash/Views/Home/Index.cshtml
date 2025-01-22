@@ -3,28 +3,9 @@
 @{
     ViewData["Title"] = "صفحه اصلی";
 }
-@*<div class="col-lg-4 ms-auto me-auto p-lg-4 mt-lg-0 mt-4">
-        <div class="rotating-card-container">
-          <div class="card card-rotate card-background card-background-mask-primary shadow-dark mt-md-0 mt-5">
-            <div class="front front-background" style="background-image: url(https://images.unsplash.com/photo-1569683795645-b62e50fbf103?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80); background-size: cover;">
-              <div class="card-body py-7 text-center">
-                <i class="material-symbols-rounded text-white text-4xl my-3">touch_app</i>
-                <h3 class="text-white">کارواش <br /> تستی 1</h3>
-                <p class="text-white opacity-8">لورم ایپسوم از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است، و برای شرایط فعلی تکنولوژی مورد نیاز، و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد، کتابهای زیادی در شصت و سه درصد گذشته حال و آینده، شام و دشواری موجود در ارائه راهکارهد.</p>
-              </div>
-            </div>
-            <div class="back back-background" style="background-image: url(https://images.unsplash.com/photo-1498889444388-e67ea62c464b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1365&q=80); background-size: cover;">
-              <div class="card-body pt-7 text-center">
-                <h3 class="text-white">تستی 1</h3>
-                <p class="text-white opacity-8">لورم ایپسوم از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است، و برای شرایط فعلی تکنولوژی مورد نیاز، و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد، کتابهای زیادی در شصت و سه درصد گذشته حال و آینده، شام و دشواری موجود در ارائه راهکارهد.</p>
-                <a href=".//sections/page-sections/hero-sections.html" target="_blank" class="btn bg-gradient-success btn-sm w-50 mx-auto mt-3">رزرو</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>*@
-
-
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <link rel="stylesheet" href=@("https://unpkg.com/@majidh1/jalalidatepicker/dist/jalalidatepicker.min.css")>
+    <script type="text/javascript" src=@("https://unpkg.com/@majidh1/jalalidatepicker/dist/jalalidatepicker.min.js")></script>
     <div class="row">
         @foreach (var item in Model)
         {
@@ -42,7 +23,7 @@
                         <div class="card-body pt-7 text-center">
                             <h3 class="text-white">تستی 1</h3>
                             <p class="text-white opacity-8">لورم ایپسوم از طراحان گرافیک است...</p>
-                            <a href="#" target="_blank" class="btn bg-gradient-success btn-sm w-50 mx-auto mt-3">رزرو</a>
+                            <button id="reserve-carwash" class="btn bg-gradient-success btn-sm w-50 mx-auto mt-3" onclick="Reserve(@item.Id)">رزرو</button>
                         </div>
                     </div>
                 </div>
@@ -50,3 +31,81 @@
         </div>
         }
     </div>
+
+<!-- مدال بوت استرپ -->
+<div class="modal" id="reservationModal" tabindex="1" style="z-index:200;" role="dialog" aria-labelledby="reservationModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="reservationModalLabel">فرم رزرو</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+            <label for="customerName">انتخاب خودرو</label>
+             <select name="carsList" id="carsList" class="form-control" asp-items="@(new SelectList(ViewBag.Cars, "Value", "Text"))"></select>
+
+          </div>
+          <div class="form-group">
+            <label for="carWashDate">تاریخ کارواش</label>
+            <input id="carwashdate" data-jdp>
+          </div>
+          <!-- سایر فیلدهای مورد نیاز -->
+          <button id="reservationForm" class="btn btn-primary">ثبت رزرو</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="~/js/kamadatepicker.js"></script>
+
+<script>
+    $(function() {
+    jalaliDatepicker.startWatch();
+    jalaliDatepicker.show(input);
+
+
+   
+});
+
+$('.close').on('click', function(){
+    $('#reservationModal').toggle();
+});
+
+function Reserve(contentId){
+    $('#reservationModal').toggle();
+    Window.contentId = contentId;
+}
+
+ $('#reservationForm').on('click', function(event) {
+    // دریافت مقادیر فرم
+    var carwashdate = $('#carwashdate').val();
+    var carsList = $('#carsList option:selected').val();
+    var selectedCarwashId = Window.contentId;
+    
+    // ارسال داده‌ها به سرور با استفاده از ajax
+    $.ajax({
+    url: '/Reservation/InsertReservation', // آدرس api برای ذخیره داده
+    method: 'post',
+    contentType: 'application/x-www-form-urlencoded', // نوع محتوا
+    data: {
+        carwashId: selectedCarwashId, // شناسه کارواش
+        carId: carsList,              // شناسه خودرو
+        reserveDate: carwashdate,     // تاریخ رزرو
+        serviceId: 1                  // شناسه خدمات
+    },
+    success: function(response) {
+        alert('رزرو با موفقیت ثبت شد!');
+        $('#reservationmodal').modal('hide'); // بستن مدال
+        // می‌توانید اینجا لیست کارواش‌ها را به‌روز کنید
+    },
+    error: function() {
+        alert('خطا در ثبت لطفا دوباره تلاش کنید.');
+    }
+});
+
+
+  });
+</script>

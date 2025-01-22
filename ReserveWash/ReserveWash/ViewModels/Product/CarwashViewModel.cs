@@ -1,5 +1,6 @@
 ﻿namespace ReserveWash.ViewModels.Product
 {
+    using Microsoft.AspNetCore.Mvc;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
@@ -17,6 +18,11 @@
         [Required(ErrorMessage = "امتیاز الزامی است")]
         [Display(Name = "امتیاز")]
         public int Star { get; set; }
+
+        [Display(Name = "تاریخ تاسیس")]
+        public string? CreateDate { get; set; }
+        [HiddenInput(DisplayValue = false)]
+        public string? UserId { get; set; }
 
         // لیست خدمات مربوط به این کارواش
         public List<CarWashServiceViewModel> Services { get; set; } = new List<CarWashServiceViewModel>();

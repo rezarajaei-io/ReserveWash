@@ -12,6 +12,7 @@ namespace ReserveWash.Models
         [MaxLength(15, ErrorMessage = " تاریخ ایجاد نمیتواند بیشتر از 15 کاراکتر باشد")]
         public string CreateDate { get; set; }
         public virtual Carwash Carwash { get; set; } // ناوبری به کارواش
+        public virtual ICollection<ReserveTime> ReserveTime { get; set; } // تایم رزرو
 
     }
 }

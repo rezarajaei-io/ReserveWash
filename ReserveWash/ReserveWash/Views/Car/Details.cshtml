@@ -1,0 +1,39 @@
+﻿@model ReserveWash.ViewModels.Product.CarViewModel
+
+@{
+    ViewData["Title"] = "جزئیات ماشین";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <h1>جزئیات ماشین</h1>
+
+    <div>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.CarModel)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Brand)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Pelak)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.CarModel)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Brand)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Pelak)
+            </dd>
+        </dl>
+    </div>
+
+    <div>
+        <a class="btn btn-warning" asp-action="Edit" asp-route-id="@Model?.Id">ویرایش</a> |
+        <a class="btn btn-secondary" asp-action="Index">بازگشت به لیست</a>
+    </div>
+</div>
