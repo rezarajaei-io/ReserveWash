@@ -41,13 +41,15 @@ namespace ReserveWash.Controllers
             {
                 return NotFound();
             }
+
             var serviceQuery = await _serviceRepository.GetAllAsync();
             var thisUser = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var reservationTimeDto = serviceQuery.Include(i => i.Carwash)
                 .Where(w => w.Carwash.UserId == thisUser && w.CarwashId == Id )
                 .ToList();
-            ViewBag.CarwashName = reservationTimeDto.FirstOrDefault().Carwash?.Name;
-            return View(reservationTimeDto.Adapt<List<CarWashServiceViewModel>>());
+
+            ViewBag.CarwashName = reservationTimeDto?.FirstOrDefault()?.Carwash?.Name ?? "";
+            return View(reservationTimeDto?.Adapt<List<CarWashServiceViewModel?>>());
 
         }
 
@@ -67,7 +69,7 @@ namespace ReserveWash.Controllers
 
             ViewBag.Id = id;
             ViewBag.Services = servicesList;
-            ViewBag.CarwashName = services.Where(w => w.Carwash.Id == id)
+            ViewBag.CarwashName = services?.Where(w => w.Carwash.Id == id)
                 .Select(s => s.Carwash)
                 .FirstOrDefault().Name;
             return View();

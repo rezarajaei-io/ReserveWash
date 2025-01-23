@@ -76,7 +76,7 @@ namespace ReserveWash.Controllers
 
             ViewBag.Id = id;
             ViewBag.Services = servicesList;
-            ViewBag.CarwashName = services.Where(w => w.Carwash.Id == id)
+            ViewBag.CarwashName = services?.Where(w => w.Carwash.Id == id)
                 .Select(s => s.Carwash)
                 .FirstOrDefault().Name;
             return View();
