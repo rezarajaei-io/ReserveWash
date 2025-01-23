@@ -27,11 +27,5 @@ namespace ReserveWash.ViewModels.Product
 
         public int? ServiceId { get; set; }
         public int? CarwashId { get; set; }
-
-        // لیست خدمات مربوط به این کارواش
-        public List<CarWashServiceViewModel> Services { get; set; } = new List<CarWashServiceViewModel>();
-
-        // لیست فیدبک‌ها مربوط به این کارواش
-        public List<FeedbackViewModel> Feedbacks { get; set; } = new List<FeedbackViewModel>();
     }
 }

@@ -15,7 +15,7 @@ namespace ReserveWash.ViewModels.Product
         public decimal Price { get; set; }
 
         // شناسه کارواش مربوطه
-        public int CarWashId { get; set; }
+        public int CarwashId { get; set; }
     }
 
 }

@@ -9,12 +9,12 @@
     <h1>ایجاد کارواش</h1>
 
     <hr />
-    
+
     <div class="row">
         <div class="col-md-6">
-            <form asp-action="Create">
+            <form asp-action="Create" enctype="multipart/form-data">
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-                
+
                 <div class="form-group">
                     <label asp-for="Name" class="control-label"></label>
                     <input asp-for="Name" class="form-control border rounded" placeholder="نام کارواش را وارد کنید" />
@@ -34,8 +34,20 @@
                 </div>
                 <br />
                 <div class="form-group">
+                    <div>
+                        <label>تصویر اصلی:</label>
+                        <input asp-for="MainImage" type="file" />
+                    </div>
+                    <div>
+                        <label>تصویر دوم:</label>
+                        <input asp-for="SubImage" type="file" />
+                    </div>
+                </div>
+
+                <div class="form-group">
                     <input type="submit" value="ایجاد" class="btn btn-success btn-block" />
                 </div>
+
             </form>
         </div>
     </div>
@@ -46,5 +58,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
 }

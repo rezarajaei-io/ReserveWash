@@ -40,8 +40,8 @@ namespace ReserveWash.Controllers
             var cars = await _carservice.GetAllAsync();
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             
-            var carList = cars.Where(w => w.User.Id != userId).Select
-                (x => new SelectListItem { Value = x.Id.ToString(), Text = x.CarModel }).ToList();
+            var carList = cars.Where(w => w.User.Id == userId).Select
+                (x => new SelectListItem { Value = x.Id.ToString(), Text = x.Brand }).ToList();
             ViewBag.Cars = carList;
 
             return View(carwashesDto); // ارسال محصولات به ویو

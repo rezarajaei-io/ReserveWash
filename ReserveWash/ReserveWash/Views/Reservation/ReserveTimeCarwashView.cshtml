@@ -1,0 +1,37 @@
+﻿@model IEnumerable<ReserveWash.ViewModels.Product.ReserveTimeViewModel>
+
+<div class="container mt-4">
+    <h5>رزرو ‌های موجود</h5>
+    <hr />
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                
+                <th>
+                    @Html.DisplayNameFor(model => model.ReservationDateFa)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ServiceName)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model) 
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ReservationDateFa)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ServiceName)
+                </td>
+                <td>
+                    <button class="btn btn-warning btn-sm reserve-time-btn" value="@item.Id">انتخاب</button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+<hr />

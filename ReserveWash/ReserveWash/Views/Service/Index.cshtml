@@ -1,0 +1,46 @@
+﻿@model IEnumerable<ReserveWash.ViewModels.Product.CarWashServiceViewModel>
+
+@{
+    ViewData["Title"] = "لیست سرویس ‌ها";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var id = Url.ActionContext.RouteData.Values["id"];
+}
+
+<div class="container mt-4">
+    <h1>لیست سرویس ‌ها - کارواش @(ViewBag.CarwashName ?? "")</h1>
+
+    <p>
+        <a class="btn bg-gradient-success" asp-action="Create" asp-route-id="@id">ایجاد سرویس جدید</a>
+    </p>
+    
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Price)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    <a class="btn btn-warning btn-sm" asp-action="Edit" asp-route-id="@item.Id">ویرایش</a> |
+                    <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@item.Id">حذف</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

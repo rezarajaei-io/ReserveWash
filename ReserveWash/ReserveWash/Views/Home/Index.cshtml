@@ -3,6 +3,29 @@
 @{
     ViewData["Title"] = "صفحه اصلی";
 }
+<style>
+    #loading {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1050;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .d-none {
+        display: none !important;
+    }
+
+    .loading-spinner {
+        width: 5rem;
+        height: 5rem;
+    }
+</style>
+
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <link rel="stylesheet" href=@("https://unpkg.com/@majidh1/jalalidatepicker/dist/jalalidatepicker.min.css")>
     <script type="text/javascript" src=@("https://unpkg.com/@majidh1/jalalidatepicker/dist/jalalidatepicker.min.js")></script>
@@ -12,14 +35,14 @@
         <div class="col-lg-3 carwash-countainer">
             <div class="rotating-card-container">
                 <div class="card card-rotate card-background card-background-mask-primary shadow-dark mt-md-0 mt-5">
-                    <div class="front front-background" style="background-image: url(https://images.unsplash.com/photo-1569683795645-b62e50fbf103?ixlib=rb-1.2.1&auto=format&fit=crop&w=987&q=80); background-size: cover;">
+                    <div class="front front-background" style="background-image: url(@item.MainImagePath); background-size: cover;">
                         <div class="card-body py-7 text-center">
                             <i class="material-symbols-rounded text-white text-4xl my-3">touch_app</i>
                             <h3 class="text-white">کارواش <br />@item.Name</h3>
                             <p class="text-white opacity-8">@item.Address</p>
                         </div>
                     </div>
-                    <div class="back back-background" style="background-image: url(https://images.unsplash.com/photo-1498889444388-e67ea62c464b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1365&q=80); background-size: cover;">
+                    <div class="back back-background" style="background-image: url(@item.SubImagePath); background-size: cover;">
                         <div class="card-body pt-7 text-center">
                             <h3 class="text-white">تستی 1</h3>
                             <p class="text-white opacity-8">لورم ایپسوم از طراحان گرافیک است...</p>
@@ -31,6 +54,12 @@
         </div>
         }
     </div>
+<div id="loading" class="d-none">
+    <div class="spinner-grow text-success loading-spinner" role="status">
+            <span class="sr-only"></span>
+    </div>
+</div>
+
 
 <!-- مدال بوت استرپ -->
 <div class="modal" id="reservationModal" tabindex="1" style="z-index:200;" role="dialog" aria-labelledby="reservationModalLabel" aria-hidden="true">
@@ -46,66 +75,87 @@
           <div class="form-group">
             <label for="customerName">انتخاب خودرو</label>
              <select name="carsList" id="carsList" class="form-control" asp-items="@(new SelectList(ViewBag.Cars, "Value", "Text"))"></select>
-
-          </div>
-          <div class="form-group">
-            <label for="carWashDate">تاریخ کارواش</label>
-            <input id="carwashdate" data-jdp>
+            <span id="carsListValidation" style="display:none;"><a href="Car/Create" class="text-danger">انتخاب خودرو اجباری میباشد جهت ثبت خودروی جدید کلیک کنید</a></span>
+                      </div>
+          <div class="form-group" id="reserve-list-body">
+            
           </div>
           <!-- سایر فیلدهای مورد نیاز -->
-          <button id="reservationForm" class="btn btn-primary">ثبت رزرو</button>
+          <button id="reservationForm" class="btn btn-primary" >ثبت رزرو</button>
       </div>
     </div>
   </div>
 </div>
 
-<script src="~/js/kamadatepicker.js"></script>
-
 <script>
-    $(function() {
-    jalaliDatepicker.startWatch();
-    jalaliDatepicker.show(input);
-
-
-   
-});
-
 $('.close').on('click', function(){
     $('#reservationModal').toggle();
 });
 
-function Reserve(contentId){
-    $('#reservationModal').toggle();
-    Window.contentId = contentId;
-}
-
- $('#reservationForm').on('click', function(event) {
-    // دریافت مقادیر فرم
-    var carwashdate = $('#carwashdate').val();
-    var carsList = $('#carsList option:selected').val();
-    var selectedCarwashId = Window.contentId;
-    
-    // ارسال داده‌ها به سرور با استفاده از ajax
-    $.ajax({
-    url: '/Reservation/InsertReservation', // آدرس api برای ذخیره داده
-    method: 'post',
-    contentType: 'application/x-www-form-urlencoded', // نوع محتوا
-    data: {
-        carwashId: selectedCarwashId, // شناسه کارواش
-        carId: carsList,              // شناسه خودرو
-        reserveDate: carwashdate,     // تاریخ رزرو
-        serviceId: 1                  // شناسه خدمات
-    },
-    success: function(response) {
-        alert('رزرو با موفقیت ثبت شد!');
-        $('#reservationmodal').modal('hide'); // بستن مدال
-        // می‌توانید اینجا لیست کارواش‌ها را به‌روز کنید
-    },
-    error: function() {
-        alert('خطا در ثبت لطفا دوباره تلاش کنید.');
-    }
+$(document).on('click', '.reserve-time-btn', function() {
+    Window.ReserveTimeId = $(this).val();
+    $(this).hide('fast');
+    $('#reservationForm').show('fast');
 });
 
+function Reserve(contentId){
+    $('#loading').removeClass('d-none');
+    $('#reservationForm').hide();
+    $.ajax({
+        url: '/Reservation/GetAllByCarWashId', // آدرس برای ذخیره داده
+        method: 'post',
+        data: {
+            carwashId: contentId, // شناسه کارواش
+        },
+        success: function(response) {
+            $('#reserve-list-body').html(response);
+        },
+        error: function() {
+            alert('خطا در دریافت اطلاعات لطفا دوباره تلاش کنید.');
+        },
+        complete: function() {
+            $('#loading').addClass('d-none');
+            $('#reservationModal').toggle();
+        }
+    });
+}
 
-  });
+$('#reservationForm').on('click', function(event) {
+    // نمایش لودینگ
+    $('#loading').removeClass('d-none');
+
+    // دریافت مقادیر فرم
+    var carsList = $('#carsList option:selected').val();
+    var getedReserveTimeid = Window.ReserveTimeId;
+    console.log('aa -> ', carsList, getedReserveTimeid)
+    alert();
+    if(!carsList){
+        $('#carsListValidation').show();
+    }
+    else
+    {
+        // ارسال داده‌ها به سرور با استفاده از ajax
+        $.ajax({
+            url: '/Reservation/InsertReservation', // آدرس api برای ذخیره داده
+            method: 'post',
+            contentType: 'application/x-www-form-urlencoded', // نوع محتوا
+            data: {
+                carId: carsList,              // شناسه خودرو
+                reserveTimeId: getedReserveTimeid,     // تاریخ رزرو
+            },
+            success: function(response) {
+                alert('رزرو با موفقیت ثبت شد!');
+                $('#reservationModal').toggle();// بستن مدال
+                // می‌توانید اینجا لیست کارواش‌ها را به‌روز کنید
+            },
+            error: function() {
+                alert('خطا در ثبت لطفا دوباره تلاش کنید.');
+            },
+            complete: function() {
+                // پنهان کردن لودینگ
+                $('#loading').addClass('d-none');
+            }
+        });
+    }
+});
 </script>

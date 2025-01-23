@@ -12,6 +12,8 @@ namespace ReserveWash.Models
         public string Address { get; set; }
         [MaxLength(15, ErrorMessage = " تاریخ ایجاد نمیتواند بیشتر از 15 کاراکتر باشد")]
         public string CreateDate { get; set; }
+        public string? MainImagePath { get; set; }
+        public string? SubImagePath { get; set; }
         public string UserId { get; set; }
         public ApplicationUser User { get; set; } // ناوبری به کاربر
         public virtual ICollection<Service> Services { get; set; } // ارتباط با خدمات کارواش

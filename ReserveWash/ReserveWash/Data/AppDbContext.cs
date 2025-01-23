@@ -60,8 +60,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
          .HasForeignKey("UserId")
          .OnDelete(DeleteBehavior.NoAction); // یا 
 
+        modelBuilder.Entity<Reservation>()
+           .HasOne(c => c.ReserveTime)
+           .WithMany(s => s.Reservation)
+           .HasForeignKey(s => s.ReserveTimeId)
+           .OnDelete(DeleteBehavior.NoAction); // یا Restrict
     }
-
-
-    public DbSet<ReserveWash.ViewModels.Product.CarWashViewModel>? CarWashViewModel { get; set; }
 }

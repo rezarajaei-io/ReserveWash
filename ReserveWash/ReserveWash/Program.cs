@@ -31,10 +31,10 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 #region Dependency Injection ( DI )
 //builder.Services.AddScoped<IUserService, UserService>(); // Scoped: یک نمونه برای هر درخواست
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>)); // Scoped: یک نمونه برای هر درخواست
+builder.Services.AddTransient<ReserveTimeService>();
 builder.Services.AddScoped<CarwashService>();
 builder.Services.AddScoped<CarService>();
 builder.Services.AddScoped<ReservationService>();
-builder.Services.AddScoped<ReserveTimeService>();
 builder.Services.AddScoped<ServiceRepository>();
 #endregion
 var app = builder.Build();

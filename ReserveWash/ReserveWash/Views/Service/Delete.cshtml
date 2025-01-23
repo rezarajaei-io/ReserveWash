@@ -1,0 +1,38 @@
+﻿@model ReserveWash.ViewModels.Product.CarWashServiceViewModel
+
+@{
+    ViewData["Title"] = "حذف";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var id = Url.ActionContext.RouteData.Values["id"];
+}
+
+<div class="container mt-4">
+    <h1>حذف</h1>
+
+    <h3>آیا مطمئن هستید که می‌خواهید این مورد را حذف کنید؟</h3>
+    
+    <div>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Price)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Price)
+            </dd>
+        </dl>
+
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="CarwashId" value=@ViewBag.CarwashId/>
+            <button type="submit" class="btn btn-danger">حذف</button>
+            <a class="btn btn-secondary" asp-action="Index" asp-route-id="@ViewBag.CarwashId">بازگشت به لیست</a>
+        </form>
+    </div>
+</div>

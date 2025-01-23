@@ -30,7 +30,7 @@ namespace ReserveWash
         public async Task<IActionResult> Index()
         {
             var reserveQuery = await _reserveService.GetAllAsync();
-            var carwashId = reserveQuery.FirstOrDefault()?.CarwashId;
+            var carwashId = reserveQuery.Include(i => i.ReserveTime).FirstOrDefault()?.ReserveTime?.CarwashId;
             if (carwashId != null)
             {
                 var carwash = await _carwashService.GetByIdAsync((int)carwashId);
@@ -43,13 +43,11 @@ namespace ReserveWash
                 // تعریف تنظیمات مپینگ
                 TypeAdapterConfig<Reservation, ReservationViewModel>
                     .NewConfig()
-                    .Map(dest => dest.CarwashName, src => src.Carwash.Name) // مپ کردن یک فیلد خاص
-                    .Map(dest => dest.ServiceName, src => src.Service.Name)
-                    .Map(dest => dest.ReserveDateFa, src => DateConverter.GregorianToJalaliStringWithTime(src.ReservationDate));
+                    .Map(dest => dest.CarwashName, src => src.ReserveTime.Carwash.Name) // مپ کردن یک فیلد خاص
+                    .Map(dest => dest.ServiceName, src => src.ReserveTime.Service.Name)
+                    .Map(dest => dest.ReserveDateFa, src => DateConverter.GregorianToJalaliStringWithTime(src.ReserveTime.ReservationDate));
 
                 var caresDto = reserveQuery
-                    .Include(r => r.Carwash)
-                    .Include(r => r.Service)
                     .Where(w => carwashUserId == thisUser)
                                 .ToList()
                                 .Adapt<List<ReservationViewModel>>();
@@ -68,14 +66,14 @@ namespace ReserveWash
                 return NotFound();
             }
             TypeAdapterConfig<Reservation, ReservationViewModel>
-                .NewConfig()
-                .Map(dest => dest.CarwashName, src => src.Carwash.Name) // مپ کردن یک فیلد خاص
-                .Map(dest => dest.ServiceName, src => src.Service.Name)
-                .Map(dest => dest.ReserveDateFa, src => DateConverter.GregorianToJalaliStringWithTime(src.ReservationDate));
+                    .NewConfig()
+                    .Map(dest => dest.CarwashName, src => src.ReserveTime.Carwash.Name) // مپ کردن یک فیلد خاص
+                    .Map(dest => dest.ServiceName, src => src.ReserveTime.Service.Name)
+                    .Map(dest => dest.ReserveDateFa, src => DateConverter.GregorianToJalaliStringWithTime(src.ReserveTime.ReservationDate));
 
-            var content = await _reserveService.GetByIdAsyncAsQuery((int)id, r => r.Carwash, r => r.Service);
+            var content = await _reserveService.GetByIdAsyncAsQuery((int)id, r => r.ReserveTime);
             var currentUserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var carwash = await _carwashService.GetByIdAsync(content.CarwashId);
+            var carwash = await _carwashService.GetByIdAsync(content.ReserveTime.CarwashId);
             var carwashUserId = carwash.UserId;
             var caresDto = carwashUserId == currentUserId ? content.Adapt<ReservationViewModel>() : null;
 
@@ -96,9 +94,9 @@ namespace ReserveWash
                 return NotFound();
             }
 
-            var content = await _reserveService.GetByIdAsync((int)id);
+            var content = await _reserveService.GetByIdAsyncAsQuery((int)id, r => r.ReserveTime);
             var currentUserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var carwash = await _carwashService.GetByIdAsync(content.CarwashId);
+            var carwash = await _carwashService.GetByIdAsync(content.ReserveTime.CarwashId);
             var carwashUserId = carwash.UserId;
             content = carwashUserId == currentUserId ? content : null;
             if (content == null)

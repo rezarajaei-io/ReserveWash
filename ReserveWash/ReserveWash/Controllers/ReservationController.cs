@@ -185,5 +185,51 @@ namespace ReserveWash.Controllers
             await _reserveTimeService.DeleteAsync(id);
             return RedirectToAction(nameof(Index), new { Id = CarwashId });
         }
+        
+        [HttpPost]
+        public async Task<IActionResult> GetAllByCarWashId(int carwashId)
+        {
+            var reserveTimeModel = await _reserveTimeService.GetAllAsync();
+            reserveTimeModel = reserveTimeModel.Include(i => i.Carwash)
+                .Include(i => i.Service)
+                .Where(w => w.CarwashId == carwashId && !w.IsReserved);
+
+            TypeAdapterConfig<ReserveTime, ReserveTimeViewModel>
+                 .NewConfig()
+                 .Map(dest => dest.CarwashName, src => src.Carwash.Name) // مپ کردن یک فیلد خاص
+                 .Map(dest => dest.ServiceName, src => src.Service.Name)
+                 .Map(dest => dest.ReservationDateFa, src => DateConverter.GregorianToJalaliStringWithTime(src.ReservationDate));
+            if (!reserveTimeModel.Any())
+            {
+                return Content("<h5>هیچ زمانی برای رزرو وجود ندارد!</h5>");
+            }
+            var reuslt = PartialView("ReserveTimeCarwashView", reserveTimeModel.Adapt<List<ReserveTimeViewModel>>());
+
+            return reuslt;
+        }
+
+        [HttpPost]
+        public async Task<bool> InsertReservation(int? carId, int? reserveTimeId)
+        {
+            if (carId == null || reserveTimeId == null)
+            {
+                return false;
+            }
+            try
+            {
+                var reserveItems = ReservationBLL.MakeReserveModelItems((int)carId, (int)reserveTimeId);
+                var reserveTimeItem = await _reserveTimeService.GetByIdAsync((int)reserveTimeId);
+                if (reserveTimeItem != null)
+                {
+                    reserveTimeItem.IsReserved = true;
+                    await _reserveTimeService.UpdateAsync(reserveTimeItem);
+                    await _reserveService.AddAsync(reserveItems);
+                }
+            }
+            catch
+            {
+            }
+            return true;
+        }
     }
 }

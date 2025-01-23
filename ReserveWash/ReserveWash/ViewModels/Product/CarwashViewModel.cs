@@ -3,6 +3,7 @@
     using Microsoft.AspNetCore.Mvc;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public class CarWashViewModel
     {
@@ -23,12 +24,14 @@
         public string? CreateDate { get; set; }
         [HiddenInput(DisplayValue = false)]
         public string? UserId { get; set; }
+        [NotMapped]
 
+        public IFormFile? MainImage { get; set; }
+        [NotMapped]
+        public IFormFile? SubImage { get; set; }
+        public string? MainImagePath { get; set; }
+        public string? SubImagePath { get; set; }
         // لیست خدمات مربوط به این کارواش
-        public List<CarWashServiceViewModel> Services { get; set; } = new List<CarWashServiceViewModel>();
-
-        // لیست فیدبک‌ها مربوط به این کارواش
-        public List<FeedbackViewModel> Feedbacks { get; set; } = new List<FeedbackViewModel>();
     }
-
 }
+

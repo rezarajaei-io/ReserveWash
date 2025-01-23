@@ -9,5 +9,7 @@
         public int CarwashId { get; set; }
         public Carwash? Carwash { get; set; }
         public Service Service { get; set; }
+        public virtual ICollection<Reservation> Reservation { get; set; } // تایم رزرو
+
     }
 }
