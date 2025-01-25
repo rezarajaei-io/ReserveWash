@@ -76,6 +76,15 @@
                                     <a href="~/Reserve/Index?ReserveType=MyCarWashes" class="dropdown-item border-radius-md">
                                         <span>رزرو کارواش ها</span>
                                     </a>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                         <h6 class="dropdown-header text-dark font-weight-bolder d-flex align-items-center px-1">
+                                            داشبورد
+                                        </h6>
+                                         <a href="~/AdminDashboard/Index" class="dropdown-item border-radius-md">
+                                        <span>داشبورد ادمین</span>
+                                    </a>
+                                    }
                                 </div>
                             </div>
 

@@ -105,6 +105,7 @@ function Reserve(contentId){
             carwashId: contentId, // شناسه کارواش
         },
         success: function(response) {
+            console.log(response);
             $('#reserve-list-body').html(response);
         },
         error: function() {

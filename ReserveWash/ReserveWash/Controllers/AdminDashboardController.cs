@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReserveWash.Repository.Services;
 using ReserveWash.Utilities;
@@ -14,7 +15,7 @@ namespace ReserveWash.Controllers
         {
             _reservationService = reservationRepository;
         }
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var reservations = await _reservationService.GetAllAsync();

@@ -194,7 +194,7 @@ namespace ReserveWash.Controllers
 
             if (!reserveTimeModel.Any())
             {
-                return Content("<h5در حال حاضر زمانی برای رزرو این کارواش  ثبت نشده !</h5>");
+                return Content("<h5>در حال حاضر زمانی برای رزرو این کارواش  ثبت نشده !</h5>");
             }
 
             return PartialView("ReserveTimeCarwashView", reserveTimeModel.Adapt<List<ReserveTimeViewModel>>());
