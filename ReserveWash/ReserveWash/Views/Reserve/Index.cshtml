@@ -22,6 +22,12 @@
                 <th>
                     @Html.DisplayNameFor(model => model.ServiceName)
                 </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CarName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CarPelak)
+                </th>
                 <th></th>
             </tr>
         </thead>
@@ -29,13 +35,19 @@
         @foreach (var item in Model) {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.CarwashName)
+                    <a href="~/CarWash/Details/@item.CarwashId">@Html.DisplayFor(modelItem => item.CarwashName)</a>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.ReserveDateFa)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.ServiceName)
+                </td> 
+                <td>
+                    @Html.DisplayFor(modelItem => item.CarName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CarPelak)
                 </td>
                 <td>
                     <a class="btn btn-info btn-sm" asp-action="Details" asp-route-id="@item.Id">جزئیات</a> |

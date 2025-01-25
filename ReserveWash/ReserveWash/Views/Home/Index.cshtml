@@ -25,10 +25,7 @@
     }
 </style>
 
-
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <link rel="stylesheet" href=@("https://unpkg.com/@majidh1/jalalidatepicker/dist/jalalidatepicker.min.css")>
-    <script type="text/javascript" src=@("https://unpkg.com/@majidh1/jalalidatepicker/dist/jalalidatepicker.min.js")></script>
     <div class="row">
         @foreach (var item in Model)
         {
@@ -44,8 +41,8 @@
                     </div>
                     <div class="back back-background" style="background-image: url(@item.SubImagePath); background-size: cover;">
                         <div class="card-body pt-7 text-center">
-                            <h3 class="text-white">تستی 1</h3>
-                            <p class="text-white opacity-8">لورم ایپسوم از طراحان گرافیک است...</p>
+                            <h3 class="text-white">درباره کارواش</h3>
+                            <p class="text-white opacity-8">@item.Description</p>
                             <button id="reserve-carwash" class="btn bg-gradient-success btn-sm w-50 mx-auto mt-3" onclick="Reserve(@item.Id)">رزرو</button>
                         </div>
                     </div>
@@ -62,7 +59,7 @@
 
 
 <!-- مدال بوت استرپ -->
-<div class="modal" id="reservationModal" tabindex="1" style="z-index:200;" role="dialog" aria-labelledby="reservationModalLabel" aria-hidden="true">
+<div class="modal" id="reservationModal" tabindex="1" style="z-index:2000;" role="dialog" aria-labelledby="reservationModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -78,7 +75,7 @@
             <span id="carsListValidation" style="display:none;"><a href="Car/Create" class="text-danger">انتخاب خودرو اجباری میباشد جهت ثبت خودروی جدید کلیک کنید</a></span>
                       </div>
           <div class="form-group" id="reserve-list-body">
-            
+            <h5>در حال حاضر زمانی برای رزرو این کارواش ثبت نشده است!</h5>
           </div>
           <!-- سایر فیلدهای مورد نیاز -->
           <button id="reservationForm" class="btn btn-primary" >ثبت رزرو</button>
@@ -127,8 +124,6 @@ $('#reservationForm').on('click', function(event) {
     // دریافت مقادیر فرم
     var carsList = $('#carsList option:selected').val();
     var getedReserveTimeid = Window.ReserveTimeId;
-    console.log('aa -> ', carsList, getedReserveTimeid)
-    alert();
     if(!carsList){
         $('#carsListValidation').show();
     }

@@ -75,4 +75,12 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
             await _dbContext.SaveChangesAsync();
         }
     }
+    public async Task DeleteAsync(IEnumerable<T> entities)
+    {
+        if (entities.Any())
+        {
+            _dbSet.RemoveRange(entities);
+            await _dbContext.SaveChangesAsync();
+        }
+    }
 }

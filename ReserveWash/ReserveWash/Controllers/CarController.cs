@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Security.Claims;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using ReserveWash.Models;
 using ReserveWash.Repository.Services;
 using ReserveWash.ViewModels.Product;
@@ -18,28 +12,40 @@ namespace ReserveWash
     {
         private readonly CarService _carService;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public CarController(CarService carservice, UserManager<ApplicationUser> userManager
-            , SignInManager<ApplicationUser> signInManager)
+        public CarController(CarService carservice, UserManager<ApplicationUser> userManager)
         {
             _carService = carservice;
-            _signInManager = signInManager;
             _userManager = userManager;
+        }
+
+        // Helper method to check if the user is an admin
+        private async Task<bool> IsAdminAsync()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            return await _userManager.IsInRoleAsync(user, "Admin");
         }
 
         // GET: car
         public async Task<IActionResult> Index()
         {
             var carQuery = await _carService.GetAllAsync();
-            var thisUser = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var thisUser = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var caresDto = carQuery.Where(w => w.UserId == thisUser)
+            // If user is admin, show all data
+            if (await IsAdminAsync())
+            {
+                var caresDto = carQuery.ToList().Adapt<List<CarViewModel>>();
+                return View(caresDto);
+            }
+
+            // For regular users, show only their own data
+            var filteredCaresDto = carQuery
+                .Where(w => w.UserId == thisUser)
                 .ToList()
                 .Adapt<List<CarViewModel>>();
 
-            return View(caresDto);
-                          
+            return View(filteredCaresDto);
         }
 
         // GET: car/Details/5
@@ -51,15 +57,23 @@ namespace ReserveWash
             }
 
             var content = await _carService.GetByIdAsync((int)id);
-            var currentUserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var caresDto = content.UserId == currentUserId ? content.Adapt<CarViewModel>() : null;
-            
-            if (caresDto == null)
+
+            // If user is admin, show the data
+            if (await IsAdminAsync())
             {
-                return NotFound();
+                var caresDto = content.Adapt<CarViewModel>();
+                return View(caresDto);
             }
 
-            return View(caresDto);
+            // For regular users, check ownership
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (content.UserId != currentUserId)
+            {
+                return Forbid();
+            }
+
+            var userCaresDto = content.Adapt<CarViewModel>();
+            return View(userCaresDto);
         }
 
         // GET: car/Create
@@ -69,23 +83,20 @@ namespace ReserveWash
         }
 
         // POST: car/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create( CarViewModel CarViewModel)
+        public async Task<IActionResult> Create(CarViewModel carViewModel)
         {
             if (ModelState.IsValid)
             {
-                string nowDate = DateTime.Now.ToString("yyyy", CultureInfo.InvariantCulture);
-                var car = CarViewModel.Adapt<Car>();
-                car.UserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var car = carViewModel.Adapt<Car>();
+                car.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 await _carService.AddAsync(car);
-                
+
                 return RedirectToAction("Index");
             }
 
-            return View(CarViewModel);
+            return View(carViewModel);
         }
 
         // GET: car/Edit/5
@@ -96,44 +107,60 @@ namespace ReserveWash
                 return NotFound();
             }
 
-            var getedcar = await _carService.GetByIdAsync((int)id);
-            var currentUserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var car = getedcar?.UserId == currentUserId ? getedcar : null;
-            if (car == null)
+            var car = await _carService.GetByIdAsync((int)id);
+
+            // If user is admin, allow editing
+            if (await IsAdminAsync())
             {
-                return NotFound();
+                var carVM = car.Adapt<CarViewModel>();
+                return View(carVM);
             }
 
-            var carVM = car.Adapt<CarViewModel>();
-            return View(carVM);
+            // For regular users, check ownership
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (car.UserId != currentUserId)
+            {
+                return Forbid();
+            }
+
+            var userCarVM = car.Adapt<CarViewModel>();
+            return View(userCarVM);
         }
 
         // POST: car/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, CarViewModel CarViewModel)
+        public async Task<IActionResult> Edit(int id, CarViewModel carViewModel)
         {
-            if (id != CarViewModel.Id)
+            if (id != carViewModel.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    CarViewModel.UserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                    var car = CarViewModel.Adapt<Car>();
+                var car = await _carService.GetByIdAsync(id);
 
-                    await _carService.UpdateAsync(car);
-                }
-                catch (DbUpdateConcurrencyException ex)
+                // If user is admin, allow editing
+                if (await IsAdminAsync())
                 {
-                        throw ex;
+                    await _carService.UpdateAsync(carViewModel.Adapt<Car>());
+                    return RedirectToAction(nameof(Index));
                 }
+
+                // For regular users, check ownership
+                var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (car.UserId != currentUserId)
+                {
+                    return Forbid();
+                }
+
+                carViewModel.UserId = currentUserId;
+                await _carService.UpdateAsync(carViewModel.Adapt<Car>());
                 return RedirectToAction(nameof(Index));
             }
-            return View(CarViewModel);
+
+            return View(carViewModel);
         }
 
         // GET: car/Delete/5
@@ -145,15 +172,23 @@ namespace ReserveWash
             }
 
             var car = await _carService.GetByIdAsync((int)id);
-            var currentUserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            car = car.UserId == currentUserId ? car : null;
-            if (car == null)
+
+            // If user is admin, allow deletion
+            if (await IsAdminAsync())
             {
-                return NotFound();
+                var carVM = car.Adapt<CarViewModel>();
+                return View(carVM);
             }
 
-            var CarViewModel = car.Adapt<CarViewModel>();
-            return View(CarViewModel);
+            // For regular users, check ownership
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (car.UserId != currentUserId)
+            {
+                return Forbid();
+            }
+
+            var userCarVM = car.Adapt<CarViewModel>();
+            return View(userCarVM);
         }
 
         // POST: car/Delete/5
@@ -161,6 +196,22 @@ namespace ReserveWash
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var car = await _carService.GetByIdAsync(id);
+
+            // If user is admin, allow deletion
+            if (await IsAdminAsync())
+            {
+                await _carService.DeleteAsync(id);
+                return RedirectToAction(nameof(Index));
+            }
+
+            // For regular users, check ownership
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (car.UserId != currentUserId)
+            {
+                return Forbid();
+            }
+
             await _carService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }

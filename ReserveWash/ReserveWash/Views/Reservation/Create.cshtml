@@ -11,7 +11,7 @@
 <script src="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.1/dist/js/persian-datepicker.min.js"></script>
 
 <div class="container mt-4">
-    <h1>تنظیم نوبت جدید</h1>
+    <h1> تنظیم نوبت جدید - کارواش @(ViewBag.CarwashName ?? "")</h1>
 
     <hr />
     
@@ -21,8 +21,8 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
                 <input type="hidden" asp-for="CarwashId" value="@ViewBag.Id"/>
                 <input type="hidden" asp-for="Id" value=0/>
+                <input type="hidden" asp-for="CarwashName" value="CarwashName"/>
                 <input id="ServiceId" type="hidden" asp-for="ServiceId"/>
-                <input class="disabled" asp-for="CarwashName" value="@ViewBag.CarwashName"/>
 
                 <div class="form-group">
                     <label asp-for="ReservationDateFa" class="control-label"></label>
@@ -32,12 +32,13 @@
                 </div>
                 <div class="form-group">
                     <label asp-for="ReservationTime" class="control-label"></label>
-                    <input asp-for="ReservationTime" class="form-control col-md-2 border rounded" placeholder="زمان رزرو" />
+                    <input asp-for="ReservationTime" data-jdp class="form-control col-md-2 border rounded" placeholder="زمان رزرو" data-jdp-only-time />
                     <span asp-validation-for="ReservationDateFa" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label for="customerName">انتخاب نوع خدمت</label>
-                    <select name="ServicesList" id="ServicesList" class="form-control" asp-items="@(new SelectList(ViewBag.Services, "Value", "Text"))"></select>
+                    <label>انتخاب نوع خدمت</label>
+                    <select name="ServicesList" id="ServicesList" oninvalid="InvalidMsg(this);" class="form-control" asp-items="@(new SelectList(ViewBag.Services, "Value", "Text"))" required></select>
+                    <span id="ServiceListValidation" class="text-danger" style="display:none;"><a href="~/Service/Create/@ViewBag.Id" class="text-danger">نوع خدمت اجباری میباشد جهت ثبت خدمت جدید کلیک کنید</a></span>
                 </div>
                 <br />
                 <div class="form-group">
@@ -48,7 +49,7 @@
     </div>
 
     <div>
-        <a class="btn btn-secondary mt-3" asp-action="Index">بازگشت به لیست</a>
+        <a class="btn btn-secondary mt-3" asp-action="Index" asp-route-id=@ViewBag.Id>بازگشت به لیست</a>
     </div>
 </div>
 
@@ -65,5 +66,13 @@
 $('#formsubmitbtn').on('click', function(){
     var servicesListId = $('#ServicesList option:selected').val();
     $('#ServiceId').val(servicesListId);
+    if(!servicesListId ){
+        $('#ServiceListValidation').show('fast');
+    }
 })
+
+function InvalidMsg(attribute){
+        attribute.preventDefault();
+
+}
 </script>

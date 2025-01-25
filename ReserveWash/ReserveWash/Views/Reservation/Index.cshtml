@@ -1,13 +1,13 @@
 ﻿@model IEnumerable<ReserveWash.ViewModels.Product.ReserveTimeViewModel>
 
 @{
-    ViewData["Title"] = "لیست رزرو ‌ها";
+    ViewData["Title"] = "لیست نوبت ‌ها";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var id = Url.ActionContext.RouteData.Values["id"];
 }
 
 <div class="container mt-4">
-    <h1>لیست رزرو ‌ها - کارواش @(Model.FirstOrDefault().CarwashName ?? "")</h1>
+    <h1>لیست رزرو ‌ها - کارواش @(Model?.FirstOrDefault()?.CarwashName ?? "")</h1>
 
     <p>
         <a class="btn bg-gradient-success" asp-action="Create" asp-route-id="@id">ایجاد نوبت جدید</a>

@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
+﻿using System.Globalization;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting.Internal;
 using ReserveWash.Models;
 using ReserveWash.Repository.Services;
 using ReserveWash.ViewModels.Product;
@@ -19,53 +13,55 @@ namespace ReserveWash
     public class CarWashController : Controller
     {
         private readonly CarwashService _carwashService;
+        private readonly ReserveTimeService _reserveTimeService;
+        private readonly ServiceRepository _serviceRepository;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IWebHostEnvironment _environment;
 
-        public CarWashController(CarwashService carwashservice, UserManager<ApplicationUser> userManager
-            , SignInManager<ApplicationUser> signInManager,
+        public CarWashController(
+            CarwashService carwashService,
+            ReserveTimeService reserveTimeService,
+            ServiceRepository serviceRepository,
+            UserManager<ApplicationUser> userManager,
             IWebHostEnvironment environment)
         {
-            _carwashService = carwashservice;
-            _signInManager = signInManager;
+            _carwashService = carwashService;
+            _reserveTimeService = reserveTimeService;
+            _serviceRepository = serviceRepository;
             _userManager = userManager;
             _environment = environment;
+        }
+
+        // Helper method to check if the user is an admin
+        private async Task<bool> IsAdminAsync()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            return await _userManager.IsInRoleAsync(user, "Admin");
         }
 
         // GET: CarWash
         public async Task<IActionResult> Index()
         {
             var carwashQuery = await _carwashService.GetAllAsync();
-            var thisUser = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var carwashesDto = carwashQuery.Where(w => w.UserId == thisUser)
+            // If user is admin, show all car washes
+            if (await IsAdminAsync())
+            {
+                var carwashesDto = carwashQuery.Adapt<List<CarWashViewModel>>();
+                return View(carwashesDto);
+            }
+
+            // For regular users, filter by UserId
+            var userCarwashesDto = carwashQuery
+                .Where(w => w.UserId == currentUserId)
                 .ToList()
                 .Adapt<List<CarWashViewModel>>();
 
-            return View(carwashesDto);
-
+            return View(userCarwashesDto);
         }
 
-        // GET: CarWash/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var content = await _carwashService.GetByIdAsync((int)id);
-            var carwashesDto = content.Adapt<CarWashViewModel>();
-
-            if (carwashesDto == null)
-            {
-                return NotFound();
-            }
-
-            return View(carwashesDto);
-        }
-
+        // GET: Carwash/Create
         // GET: CarWash/Create
         public IActionResult Create()
         {
@@ -73,137 +69,43 @@ namespace ReserveWash
         }
 
         // POST: CarWash/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-        [Bind("Id,Name,Address,Star,MainImage,SubImage")] CarWashViewModel carWashViewModel,
-        IFormFile MainImage,
-        IFormFile SubImage)
+            [Bind("Id,Name,Address,Description")] CarWashViewModel carWashViewModel,
+            IFormFile? MainImage,
+            IFormFile? SubImage)
         {
-            if (ModelState.IsValid)
-            {
-                // تنظیم تاریخ
-                string nowDate = DateTime.Now.ToString("yyyy-mm", CultureInfo.InvariantCulture);
-                carWashViewModel.CreateDate = nowDate;
-
-                // آپلود لوگو
-                if (MainImage != null && MainImage.Length > 0)
-                {
-                    string uploadFolder = Path.Combine(_environment.WebRootPath, "Uploads", "MainImages");
-                    Directory.CreateDirectory(uploadFolder);
-
-                    string uniqueMainImageName = Guid.NewGuid().ToString() + "_" + MainImage.FileName;
-                    string MainImagePath = Path.Combine(uploadFolder, uniqueMainImageName);
-
-                    using (var fileStream = new FileStream(MainImagePath, FileMode.Create))
-                    {
-                        await MainImage.CopyToAsync(fileStream);
-                    }
-                    carWashViewModel.MainImagePath = Path.GetRelativePath(
-                        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"),
-                        MainImagePath
-                    ).Replace("\\", "/");
-
-                }
-
-                // آپلود عکس فرعی
-                if (SubImage != null && SubImage.Length > 0)
-                {
-                    string uploadFolder = Path.Combine(_environment.WebRootPath, "Uploads", "SubImages");
-                    Directory.CreateDirectory(uploadFolder);
-
-                    string uniqueSubImageName = Guid.NewGuid().ToString() + "_" + SubImage.FileName;
-                    string SubImagePath = Path.Combine(uploadFolder, uniqueSubImageName);
-
-                    using (var fileStream = new FileStream(SubImagePath, FileMode.Create))
-                    {
-                        await SubImage.CopyToAsync(fileStream);
-                    }
-                    carWashViewModel.SubImagePath = Path.GetRelativePath(
-                      Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"),
-                      SubImagePath
-                  ).Replace("\\", "/");
-                }
-
-                // تبدیل ViewModel به Model
-                var carwashModel = carWashViewModel.Adapt<Carwash>();
-                carwashModel.UserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                await _carwashService.AddAsync(carwashModel);
-
-                return RedirectToAction("Index");
-            }
-
-            return View(carWashViewModel);
-        }
-        // GET: CarWash/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var carwash = await _carwashService.GetByIdAsync((int)id);
-            var currentUserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            carwash = carwash.UserId == currentUserId ? carwash : null;
-
-            if (carwash == null)
-            {
-                return NotFound();
-            }
-
-            var carwashVM = carwash.Adapt<CarWashViewModel>();
-
-            // اضافه کردن مسیرهای عکس به ViewModel
-            carwashVM.MainImagePath = carwash.MainImagePath;
-            carwashVM.SubImagePath = carwash.SubImagePath;
-
-            return View(carwashVM);
-        }
-
-        // POST: CarWash/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(
-            int id,
-            [Bind("Id,Name,Address,Star,CreateDate")] CarWashViewModel carWashViewModel,
-            IFormFile MainImage,
-            IFormFile SubImage)
-        {
-            if (id != carWashViewModel.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // بازیابی مدل موجود
-                    var existingCarwash = await _carwashService.GetByIdAsync(id);
+                    // تنظیم تاریخ
+                    string nowDate = DateTime.Now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                    carWashViewModel.CreateDate = nowDate;
 
-                    // آپلود لوگو
+                    // آپلود عکس اصلی
                     if (MainImage != null && MainImage.Length > 0)
                     {
                         string uploadFolder = Path.Combine(_environment.WebRootPath, "Uploads", "MainImages");
                         Directory.CreateDirectory(uploadFolder);
 
                         string uniqueMainImageName = Guid.NewGuid().ToString() + "_" + MainImage.FileName;
-                        string MainImagePath = Path.Combine(uploadFolder, uniqueMainImageName);
+                        string mainImagePath = Path.Combine(uploadFolder, uniqueMainImageName);
 
-                        using (var fileStream = new FileStream(MainImagePath, FileMode.Create))
+                        using (var fileStream = new FileStream(mainImagePath, FileMode.Create))
                         {
                             await MainImage.CopyToAsync(fileStream);
                         }
-                        carWashViewModel.MainImagePath = Path.Combine("Uploads", "MainImages", Path.GetFileName(MainImagePath)).Replace("\\", "/");
+
+                        carWashViewModel.MainImagePath = Path.GetRelativePath(
+                            Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"),
+                            mainImagePath
+                        ).Replace("\\", "/");
                     }
                     else
                     {
-                        // حفظ تصویر قبلی
-                        carWashViewModel.MainImagePath = existingCarwash.MainImagePath;
+                        carWashViewModel.MainImagePath = null; // یا یک مسیر پیش‌فرض برای زمانی که فایلی ارسال نمی‌شود
                     }
 
                     // آپلود عکس فرعی
@@ -213,82 +115,190 @@ namespace ReserveWash
                         Directory.CreateDirectory(uploadFolder);
 
                         string uniqueSubImageName = Guid.NewGuid().ToString() + "_" + SubImage.FileName;
-                        string SubImagePath = Path.Combine(uploadFolder, uniqueSubImageName);
+                        string subImagePath = Path.Combine(uploadFolder, uniqueSubImageName);
 
-                        using (var fileStream = new FileStream(SubImagePath, FileMode.Create))
+                        using (var fileStream = new FileStream(subImagePath, FileMode.Create))
                         {
                             await SubImage.CopyToAsync(fileStream);
                         }
-                        carWashViewModel.SubImagePath = Path.Combine("Uploads", "SubImages", Path.GetFileName(SubImagePath)).Replace("\\", "/");
+
+                        carWashViewModel.SubImagePath = Path.GetRelativePath(
+                            Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"),
+                            subImagePath
+                        ).Replace("\\", "/");
                     }
                     else
                     {
-                        // حفظ تصویر قبلی
-                        carWashViewModel.SubImagePath = existingCarwash.SubImagePath;
+                        carWashViewModel.SubImagePath = null; // یا یک مسیر پیش‌فرض
                     }
 
-                    var carwash = carWashViewModel.Adapt<Carwash>();
-                    carwash.UserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                    await _carwashService.UpdateAsync(carwash);
+                    // تبدیل ViewModel به Model
+                    var carwashModel = carWashViewModel.Adapt<Carwash>();
+                    carwashModel.UserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                    // ذخیره در پایگاه داده
+                    await _carwashService.AddAsync(carwashModel);
+
+                    return RedirectToAction("Index");
                 }
-                catch (DbUpdateConcurrencyException ex)
+                catch (Exception ex)
                 {
-                    throw ex;
+                    // مدیریت خطا
+                    ModelState.AddModelError(string.Empty, "خطایی در ایجاد کارواش رخ داده است: " + ex.Message);
                 }
-                return RedirectToAction(nameof(Index));
             }
+
             return View(carWashViewModel);
         }
 
 
-        //// GET: CarWash/Edit/5
-        //public async Task<IActionResult> Edit(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
 
-        //    var carwash = await _carwashService.GetByIdAsync((int)id);
-        //    var currentUserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-        //    carwash = carwash.UserId == currentUserId ? carwash : null;
-        //    if (carwash == null)
-        //    {
-        //        return NotFound();
-        //    }
+        // GET: CarWash/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-        //    var carwashVM = carwash.Adapt<CarWashViewModel>();
-        //    return View(carwashVM);
-        //}
+            var carwash = await _carwashService.GetByIdAsync((int)id);
 
-        //// POST: CarWash/Edit/5
-        //// To protect from overposting attacks, enable the specific properties you want to bind to.
-        //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Address,Star,CreateDate")] CarWashViewModel carWashViewModel)
-        //{
-        //    if (id != carWashViewModel.Id)
-        //    {
-        //        return NotFound();
-        //    }
+            // If user is admin, allow access
+            if (await IsAdminAsync())
+            {
+                var carwashDto = carwash.Adapt<CarWashViewModel>();
+                return View(carwashDto);
+            }
 
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            var carwash = carWashViewModel.Adapt<Carwash>();
-        //            carwash.UserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-        //            await _carwashService.UpdateAsync(carwash);
-        //        }
-        //        catch (DbUpdateConcurrencyException ex)
-        //        {
-        //            throw ex;
-        //        }
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    return View(carWashViewModel);
-        //}
+            // For regular users, check ownership
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (carwash.UserId != currentUserId)
+            {
+                return Forbid();
+            }
+
+            var userCarwashDto = carwash.Adapt<CarWashViewModel>();
+            return View(userCarwashDto);
+        }
+
+        // GET: CarWash/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var carwash = await _carwashService.GetByIdAsync((int)id);
+
+            // If user is admin, allow editing
+            if (await IsAdminAsync())
+            {
+                var carwashDto = carwash.Adapt<CarWashViewModel>();
+                return View(carwashDto);
+            }
+
+            // For regular users, check ownership
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (carwash.UserId != currentUserId)
+            {
+                return Forbid();
+            }
+
+            var userCarwashDto = carwash.Adapt<CarWashViewModel>();
+            return View(userCarwashDto);
+        }
+
+        // POST: CarWash/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, CarWashViewModel carWashViewModel, IFormFile? MainImage, IFormFile? SubImage)
+        {
+            if (id != carWashViewModel.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                var carwash = await _carwashService.GetByIdAsync(id);
+                if (carwash == null)
+                {
+                    return NotFound();
+                }
+
+                // If user is admin, allow editing
+                if (await IsAdminAsync())
+                {
+                    await UpdateCarWashFiles(carWashViewModel, carwash, MainImage, SubImage);
+                    return RedirectToAction(nameof(Index));
+                }
+
+                // For regular users, check ownership
+                var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (carwash.UserId != currentUserId)
+                {
+                    return Forbid();
+                }
+
+                carWashViewModel.UserId = currentUserId;
+                await UpdateCarWashFiles(carWashViewModel, carwash, MainImage, SubImage);
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(carWashViewModel);
+        }
+
+        private async Task UpdateCarWashFiles(CarWashViewModel carWashViewModel, Carwash carwash, IFormFile? MainImage, IFormFile? SubImage)
+        {
+            // Update Main Image
+            if (MainImage != null && MainImage.Length > 0)
+            {
+                string uploadFolder = Path.Combine(_environment.WebRootPath, "Uploads", "MainImages");
+                Directory.CreateDirectory(uploadFolder);
+
+                string uniqueMainImageName = Guid.NewGuid().ToString() + "_" + MainImage.FileName;
+                string mainImagePath = Path.Combine(uploadFolder, uniqueMainImageName);
+
+                using (var fileStream = new FileStream(mainImagePath, FileMode.Create))
+                {
+                    await MainImage.CopyToAsync(fileStream);
+                }
+
+                carwash.MainImagePath = Path.GetRelativePath(
+                    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"),
+                    mainImagePath
+                ).Replace("\\", "/");
+            }
+
+            // Update Sub Image
+            if (SubImage != null && SubImage.Length > 0)
+            {
+                string uploadFolder = Path.Combine(_environment.WebRootPath, "Uploads", "SubImages");
+                Directory.CreateDirectory(uploadFolder);
+
+                string uniqueSubImageName = Guid.NewGuid().ToString() + "_" + SubImage.FileName;
+                string subImagePath = Path.Combine(uploadFolder, uniqueSubImageName);
+
+                using (var fileStream = new FileStream(subImagePath, FileMode.Create))
+                {
+                    await SubImage.CopyToAsync(fileStream);
+                }
+
+                carwash.SubImagePath = Path.GetRelativePath(
+                    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"),
+                    subImagePath
+                ).Replace("\\", "/");
+            }
+
+            // Update other properties from ViewModel
+            carwash.Name = carWashViewModel.Name;
+            carwash.Address = carWashViewModel.Address;
+            carwash.Description = carWashViewModel.Description;
+
+            await _carwashService.UpdateAsync(carwash);
+        }
+
 
         // GET: CarWash/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -299,15 +309,23 @@ namespace ReserveWash
             }
 
             var carwash = await _carwashService.GetByIdAsync((int)id);
-            var currentUserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            carwash = carwash.UserId == currentUserId ? carwash : null;
-            if (carwash == null)
+
+            // If user is admin, allow deletion
+            if (await IsAdminAsync())
             {
-                return NotFound();
+                var carwashDto = carwash.Adapt<CarWashViewModel>();
+                return View(carwashDto);
             }
 
-            var carWashViewModel = carwash.Adapt<CarWashViewModel>();
-            return View(carWashViewModel);
+            // For regular users, check ownership
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (carwash.UserId != currentUserId)
+            {
+                return Forbid();
+            }
+
+            var userCarwashDto = carwash.Adapt<CarWashViewModel>();
+            return View(userCarwashDto);
         }
 
         // POST: CarWash/Delete/5
@@ -315,6 +333,20 @@ namespace ReserveWash
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var content = await _carwashService.GetAllAsync();
+            content = content.Where(w => w.Id == id).Include(i => i.ReserveTime).Include(i => i.Services);
+            var reserveTimes = content?.SelectMany(m => m.ReserveTime).AsEnumerable();
+            var services = content?.SelectMany(m => m.Services).AsEnumerable();
+
+            if (reserveTimes.Any())
+            {
+                await _reserveTimeService.DeleteAsync(reserveTimes);
+            }
+
+            if (services.Any())
+            {
+                await _serviceRepository.DeleteAsync(services);
+            }
             await _carwashService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }

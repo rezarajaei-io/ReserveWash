@@ -24,7 +24,7 @@ namespace ReserveWash.ViewModels.Product
 
         [Display(Name = "قابل رزرو است؟")]
         public bool IsReserved { get; set; }
-
+        [Required(ErrorMessage = " خدمت قابل ارائه الزامی است.")]
         public int? ServiceId { get; set; }
         public int? CarwashId { get; set; }
     }

@@ -22,7 +22,7 @@
                     @Html.DisplayNameFor(model => model.Address)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Star)
+                    @Html.DisplayNameFor(model => model.Description)
                 </th>
                 <th>
                     تاریخ تاسیس
@@ -40,7 +40,7 @@
                     @Html.DisplayFor(modelItem => item.Address)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Star)
+                    @Html.DisplayFor(modelItem => item.Description)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.CreateDate)
@@ -49,8 +49,8 @@
                     <a class="btn btn-warning btn-sm" asp-action="Edit" asp-route-id="@item.Id">ویرایش</a> |
                     <a class="btn btn-info btn-sm" asp-action="Details" asp-route-id="@item.Id">جزئیات</a> |
                     <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@item.Id">حذف</a> |
-                    <a class="btn btn-primary btn-sm" asp-controller="Reservation" asp-action="Index" asp-route-id="@item.Id">نوبت ها</a> |
-                    <a class="btn btn-success btn-sm" asp-controller="Service" asp-action="Index" asp-route-id="@item.Id">خدمت ها</a>
+                    <a class="btn btn-success btn-sm" asp-controller="Service" asp-action="Index" asp-route-id="@item.Id">خدمت ها</a> |
+                    <a class="btn btn-primary btn-sm" asp-controller="Reservation" asp-action="Index" asp-route-id="@item.Id">نوبت ها</a> 
                 </td>
             </tr>
         }

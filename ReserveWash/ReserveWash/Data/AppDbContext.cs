@@ -15,10 +15,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<Car> Car { get; set; }
     public DbSet<Carwash> Carwash { get; set; }
-    public DbSet<Feedback> Feedback { get; set; }
     public DbSet<Reservation> Reservation { get; set; }
     public DbSet<Service> Service { get; set; }
     public DbSet<ReserveTime> ReserveTime { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -42,12 +42,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
            .HasForeignKey(s => s.CarwashId)
            .OnDelete(DeleteBehavior.NoAction); // یا Restrict
 
-        modelBuilder.Entity<Carwash>()
-            .HasMany(c => c.Feedbacks)
-            .WithOne(f => f.Carwash)
-            .HasForeignKey(f => f.CarwashId)
-            .OnDelete(DeleteBehavior.NoAction); // یا Restrict
-
+      
         modelBuilder.Entity<Carwash>()
             .HasOne(c => c.User)
             .WithMany() // اگر User به Carwash اشاره نمی‌کند

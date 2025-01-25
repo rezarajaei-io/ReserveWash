@@ -63,6 +63,28 @@ namespace ReserveWash.Utilities
             // فرمت‌بندی خروجی به صورت رشته
             return $"{year}/{month:D2}/{day:D2} {hour:D2}:{minute:D2}:{second:D2}";
         }
+        public static string GregorianToJalaliStringPersianMonth(DateTime date)
+        {
+            PersianCalendar persianCalendar = new PersianCalendar();
+
+            // استخراج سال، ماه و روز از تاریخ میلادی
+            int year = persianCalendar.GetYear(date);
+            int month = persianCalendar.GetMonth(date);
+
+            // آرایه‌ای از نام‌های فارسی ماه‌ها
+            string[] months = new string[]
+            {
+        "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
+        "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"
+            };
+
+            // تبدیل ماه به نام فارسی
+            string monthName = months[month - 1];  // چون ماه‌ها در PersianCalendar از 1 شروع می‌شود، باید 1 از آن کم کنیم
+
+            // فرمت‌بندی خروجی به صورت رشته با نمایش نام ماه
+            return $"{monthName} - {year}";
+        }
+
     }
 
 }

@@ -4,6 +4,11 @@
     ViewData["Title"] = "ایجاد کارواش";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<head>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+</head>
 
 <div class="container mt-4">
     <h1>ایجاد کارواش</h1>
@@ -23,14 +28,17 @@
 
                 <div class="form-group">
                     <label asp-for="Address" class="control-label"></label>
+                    <div style="display:flex;">
                     <input asp-for="Address" class="form-control border rounded" placeholder="آدرس کارواش را وارد کنید" />
+                    <button type="button" class="btn col-md-3 btn-primary mt-2" onclick="ToggleMapModal()" style="margin-right: 10px; height: 50px;">انتخاب از روی نقشه</button>
+                    </div>
                     <span asp-validation-for="Address" class="text-danger"></span>
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="Star" class="control-label"></label>
-                    <input asp-for="Star" class="form-control border rounded" placeholder="امتیاز کارواش را وارد کنید" />
-                    <span asp-validation-for="Star" class="text-danger"></span>
+                    <label asp-for="Description" class="control-label"></label>
+                    <input asp-for="Description" class="form-control border rounded" placeholder="توضیحات را وارد کنید" />
+                    <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
                 <br />
                 <div class="form-group">
@@ -57,6 +65,59 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal" id="mapModal" tabindex="-1" role="dialog" aria-labelledby="mapModalLabel" >
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mapModalLabel">انتخاب موقعیت روی نقشه</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="ToggleMapModal()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="map" style="height: 400px;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="ToggleMapModal()">بستن</button>
+                <button type="button" class="btn btn-primary" id="selectLocation">انتخاب موقعیت</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function ToggleMapModal(){
+        $('#mapModal').toggle();
+    }
+    var map = L.map('map').setView([34.79922, 48.51456], 12); // Hamedan coordinates
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    var marker;
+
+    map.on('click', function (e) {
+        if (marker) {
+            marker.setLatLng(e.latlng);
+        } else {
+            marker = L.marker(e.latlng).addTo(map);
+        }
+    });
+
+    $('#selectLocation').on('click', function () {
+        if (marker) {
+            var latlng = marker.getLatLng();
+            $.get(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latlng.lat}&lon=${latlng.lng}`, function (data) {
+                var addressParts = data.display_name.split(',');
+                var persianAddress = addressParts.filter(part => /[\u0600-\u06FF]/.test(part)).join(', ');
+                $('input[name="Address"]').val(persianAddress);
+                $('#mapModal').modal('hide');
+            });
+        }
+    });
+</script>
+    
 @section Scripts {
     @{
     await Html.RenderPartialAsync("_ValidationScriptsPartial");

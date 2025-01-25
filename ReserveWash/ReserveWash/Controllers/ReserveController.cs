@@ -26,36 +26,58 @@ namespace ReserveWash
             _carwashService = carwashService;
         }
 
+        // Helper method to check if the user is an admin
+        private async Task<bool> IsAdminAsync()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            return await _userManager.IsInRoleAsync(user, "Admin");
+        }
+
         // GET: car
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? ReserveType)
         {
             var reserveQuery = await _reserveService.GetAllAsync();
-            var carwashId = reserveQuery.Include(i => i.ReserveTime).FirstOrDefault()?.ReserveTime?.CarwashId;
-            if (carwashId != null)
+            reserveQuery = reserveQuery
+                .Include(i => i.ReserveTime.Service)
+                .Include(i => i.Car)
+                .Include(i => i.ReserveTime.Carwash);
+
+            TypeAdapterConfig<Reservation, ReservationViewModel>
+                .NewConfig()
+                .Map(dest => dest.CarName, src => src.Car.Brand)
+                .Map(dest => dest.CarPelak, src => src.Car.Pelak)
+                .Map(dest => dest.CarwashId, src => src.ReserveTime.CarwashId)
+                .Map(dest => dest.CarwashName, src => src.ReserveTime.Carwash.Name)
+                .Map(dest => dest.ServiceName, src => src.ReserveTime.Service.Name)
+                .Map(dest => dest.ReserveDateFa, src => DateConverter.GregorianToJalaliStringWithTime(src.ReserveTime.ReservationDate));
+
+
+            // If user is admin, show all reservations
+            if (await IsAdminAsync())
             {
-                var carwash = await _carwashService.GetByIdAsync((int)carwashId);
-                var carwashUserId = carwash.UserId;
-                var thisUser = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                //var caresDto1 = reserveQuery.Where(w => carwashUserId == thisUser)
-                //    .ToList()
-                //    .Adapt<List<ReservationViewModel>>();
-
-                // تعریف تنظیمات مپینگ
-                TypeAdapterConfig<Reservation, ReservationViewModel>
-                    .NewConfig()
-                    .Map(dest => dest.CarwashName, src => src.ReserveTime.Carwash.Name) // مپ کردن یک فیلد خاص
-                    .Map(dest => dest.ServiceName, src => src.ReserveTime.Service.Name)
-                    .Map(dest => dest.ReserveDateFa, src => DateConverter.GregorianToJalaliStringWithTime(src.ReserveTime.ReservationDate));
-
-                var caresDto = reserveQuery
-                    .Where(w => carwashUserId == thisUser)
-                                .ToList()
-                                .Adapt<List<ReservationViewModel>>();
-
-                return View(caresDto);
+                var allReservations = reserveQuery.ToList().Adapt<List<ReservationViewModel>>();
+                return View(allReservations);
             }
-            List<ReservationViewModel> emptyReserveList = new List<ReservationViewModel>();
-            return View(emptyReserveList);
+
+            // For regular users, filter by ownership
+            var thisUser = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var filtredReserves = new List<ReservationViewModel>();
+            if (!string.IsNullOrEmpty(ReserveType))
+            {
+                filtredReserves = reserveQuery
+                .Where(w => w.ReserveTime.Carwash.UserId == thisUser)
+                .ToList()
+                .Adapt<List<ReservationViewModel>>();
+            }
+
+            else
+            {
+                filtredReserves = reserveQuery
+               .Where(w => w.ReserveTime.Carwash.UserId != thisUser)
+               .ToList()
+               .Adapt<List<ReservationViewModel>>();
+            }
+            return View(filtredReserves);
         }
 
         // GET: car/Details/5
@@ -65,26 +87,35 @@ namespace ReserveWash
             {
                 return NotFound();
             }
+
             TypeAdapterConfig<Reservation, ReservationViewModel>
-                    .NewConfig()
-                    .Map(dest => dest.CarwashName, src => src.ReserveTime.Carwash.Name) // مپ کردن یک فیلد خاص
-                    .Map(dest => dest.ServiceName, src => src.ReserveTime.Service.Name)
-                    .Map(dest => dest.ReserveDateFa, src => DateConverter.GregorianToJalaliStringWithTime(src.ReserveTime.ReservationDate));
+                .NewConfig()
+                .Map(dest => dest.CarName, src => src.Car.Brand)
+                .Map(dest => dest.CarPelak, src => src.Car.Pelak)
+                .Map(dest => dest.CarwashName, src => src.ReserveTime.Carwash.Name)
+                .Map(dest => dest.ServiceName, src => src.ReserveTime.Service.Name)
+                .Map(dest => dest.ReserveDateFa, src => DateConverter.GregorianToJalaliStringWithTime(src.ReserveTime.ReservationDate));
 
-            var content = await _reserveService.GetByIdAsyncAsQuery((int)id, r => r.ReserveTime);
-            var currentUserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var carwash = await _carwashService.GetByIdAsync(content.ReserveTime.CarwashId);
-            var carwashUserId = carwash.UserId;
-            var caresDto = carwashUserId == currentUserId ? content.Adapt<ReservationViewModel>() : null;
+            var content = await _reserveService.GetByIdAsyncAsQuery((int)id, r => r.ReserveTime.Service, r => r.ReserveTime.Service, r => r.Car);
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (caresDto == null)
+            // If user is admin, show details
+            if (await IsAdminAsync())
             {
-                return NotFound();
+                var reservationDto = content.Adapt<ReservationViewModel>();
+                return View(reservationDto);
             }
 
-            return View(caresDto);
-        }
+            // For regular users, check ownership
+            var carwash = await _carwashService.GetByIdAsync(content.ReserveTime.CarwashId);
+            if (carwash.UserId != currentUserId)
+            {
+                return Forbid();
+            }
 
+            var userReservationDto = content.Adapt<ReservationViewModel>();
+            return View(userReservationDto);
+        }
 
         // GET: car/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -94,18 +125,32 @@ namespace ReserveWash
                 return NotFound();
             }
 
-            var content = await _reserveService.GetByIdAsyncAsQuery((int)id, r => r.ReserveTime);
-            var currentUserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var carwash = await _carwashService.GetByIdAsync(content.ReserveTime.CarwashId);
-            var carwashUserId = carwash.UserId;
-            content = carwashUserId == currentUserId ? content : null;
-            if (content == null)
+            var content = await _reserveService.GetByIdAsyncAsQuery((int)id, r => r.ReserveTime.Service, r => r.ReserveTime.Service, r => r.Car);
+            TypeAdapterConfig<Reservation, ReservationViewModel>
+               .NewConfig()
+               .Map(dest => dest.CarName, src => src.Car.Brand)
+               .Map(dest => dest.CarPelak, src => src.Car.Pelak)
+               .Map(dest => dest.CarwashName, src => src.ReserveTime.Carwash.Name)
+               .Map(dest => dest.ServiceName, src => src.ReserveTime.Service.Name)
+               .Map(dest => dest.ReserveDateFa, src => DateConverter.GregorianToJalaliStringWithTime(src.ReserveTime.ReservationDate));
+
+            // If user is admin, allow deletion
+            if (await IsAdminAsync())
             {
-                return NotFound();
+                var reservationDto = content.Adapt<ReservationViewModel>();
+                return View(reservationDto);
             }
 
-            var ReservationViewModel = content.Adapt<ReservationViewModel>();
-            return View(ReservationViewModel);
+            // For regular users, check ownership
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var carwash = await _carwashService.GetByIdAsync(content.ReserveTime.CarwashId);
+            if (carwash.UserId != currentUserId)
+            {
+                return Forbid();
+            }
+
+            var userReservationDto = content.Adapt<ReservationViewModel>();
+            return View(userReservationDto);
         }
 
         // POST: car/Delete/5

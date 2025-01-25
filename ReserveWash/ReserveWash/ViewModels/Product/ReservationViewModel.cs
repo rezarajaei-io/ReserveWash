@@ -18,7 +18,13 @@
         [Required(ErrorMessage = "شناسه خودرو الزامی است.")]
         [Display(Name = "شناسه خودرو")]
         public int CarId { get; set; }
-    
+
+        [Display(Name = "نام خودرو")]
+        public string CarName { get; set; }
+        [Display(Name = "شناسه کارواش")]
+        public int? CarwashId { get; set; }
+        [Display(Name = "پلاک خودرو")]
+        public string CarPelak { get; set; }
         [Display(Name = "نام کارواش")]
         public string CarwashName { get; set; }
 

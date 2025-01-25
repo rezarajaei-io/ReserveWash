@@ -1,0 +1,90 @@
+﻿@model ReserveWash.ViewModels.Product.AdminDashboardViewModel
+
+<div class="container mt-4">
+    <h1 class="text-center">داشبورد ادمین</h1>
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h5 class="card-title">تعداد کل رزروها</h5>
+                    <p class="card-text">@Model.TotalReservations</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title">درآمد کل</h5>
+                    <p class="card-text">@Model.TotalIncome تومان</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title">تعداد خودروها</h5>
+                    <p class="card-text">@Model.CarsCount</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <h2>آخرین رزروها</h2>
+        <table class="table table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>خودرو</th>
+                    <th>سرویس</th>
+                    <th>زمان رزرو</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var reservation in Model.RecentReservations)
+                {
+                    <tr>
+                        <td>@reservation.CarName</td>
+                        <td>@reservation.ServiceName</td>
+                        <td>@reservation.ReservationDate.ToString("yyyy/MM/dd HH:mm")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mb-3">
+        <h2>خدمات پرطرفدار</h2>
+        <ul class="list-group">
+            @foreach (var service in Model.PopularServices)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    @service.ServiceName
+                    <span class="badge badge-primary badge-pill">@service.UsageCount بار</span>
+                </li>
+            }
+        </ul>
+    </div>
+
+    <div class="mb-3">
+        <h2>درآمد ماهانه</h2>
+        <canvas id="incomeChart"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const incomeData = {
+        labels: @Html.Raw(Json.Serialize(Model.MonthlyIncome.Select(i => i.Month))),
+        datasets: [{
+            label: 'درآمد (تومان)',
+            data: @Html.Raw(Json.Serialize(Model.MonthlyIncome.Select(i => i.Income))),
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+        }]
+    };
+    new Chart(document.getElementById('incomeChart'), {
+        type: 'bar',
+        data: incomeData
+    });
+</script>

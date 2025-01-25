@@ -1,30 +1,78 @@
 ﻿@model ReserveWash.ViewModels.Auth.RegisterViewModel
 
-<h2>ثبت نام</h2>
-
-<form method="post" asp-action="Register">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-   <div>
-       <label asp-for="Email"></label>
-       <input asp-for="Email" name="Email"/>
-       <span asp-validation-for="Email"></span>
-   </div>
-   <div>
-       <label asp-for="FullName"></label>
-       <input asp-for="FullName" name="FullName" />
-       <span asp-validation-for="FullName"></span>
-   </div>
-   <div>
-       <label asp-for="Password"></label>
-       <input asp-for="Password" type="password" name="Password" />
-       <span asp-validation-for="Password"></span>
-   </div>
-   <div>
-       <label asp-for="ConfirmPassword"></label>
-       <input asp-for="ConfirmPassword" type="password" name="ConfirmPassword" />
-       <span asp-validation-for="ConfirmPassword"></span>
-   </div>
-   <button type="submit">ثبت نام</button>
-</form>
-
-<a asp-action="Login">به صفحه ورود بروید</a>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ثبت نام - رزرو و کارواش</title>
+    <style>
+        body {
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .register-container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .register-container h2 {
+            margin-bottom: 20px;
+        }
+        .carwash-background {
+            background: url('/img/ReservewashLogo.png') no-repeat center center / cover;
+            height: 200px;
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .btn-custom {
+            background-color: #17a2b8;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <center>
+    <div class="register-container">
+        <div class="carwash-background"></div>
+        <h2>ثبت نام</h2>
+        <form method="post" asp-action="Register">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" name="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FullName"></label>
+                <input asp-for="FullName" name="FullName" class="form-control" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" type="password" name="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConfirmPassword"></label>
+                <input asp-for="ConfirmPassword" type="password" name="ConfirmPassword" class="form-control" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-custom btn-block">ثبت نام</button>
+        </form>
+        <a asp-action="Login" class="btn btn-link">به صفحه ورود بروید</a>
+    </div>
+    </center>
+    <br /><br />
+    <br /><br />
+    <br /><br />
+</body>

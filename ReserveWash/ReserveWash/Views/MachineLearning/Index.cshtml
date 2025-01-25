@@ -1,0 +1,15 @@
+﻿@model List<ReserveWash.AI.ServicePrediction>
+
+<h2>Predicted Service Costs</h2>
+
+<table>
+    <tr>
+        <th>Predicted Service Cost</th>
+    </tr>
+    @foreach (var prediction in Model)
+    {
+        <tr>
+            <td>@prediction.PredictedServiceCost</td>
+        </tr>
+    }
+</table>

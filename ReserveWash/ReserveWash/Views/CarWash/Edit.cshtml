@@ -14,9 +14,11 @@
         <div class="col-md-6">
             <form asp-action="Edit" enctype="multipart/form-data">
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-                
+
                 <input type="hidden" asp-for="Id" />
-                <input type="hidden" asp-for="CreateDate" />
+                <input type="hidden" asp-for="MainImagePath" />
+                <input type="hidden" asp-for="SubImage" value=0/>
+                <input type="hidden" asp-for="CreateDate" value=0/>
 
                 <div class="form-group">
                     <label asp-for="Name" class="control-label"></label>
@@ -31,27 +33,29 @@
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="Star" class="control-label"></label>
-                    <input asp-for="Star" class="form-control border rounded" placeholder="امتیاز کارواش را وارد کنید" />
-                    <span asp-validation-for="Star" class="text-danger"></span>
+                    <label asp-for="Description" class="control-label"></label>
+                    <input asp-for="Description" class="form-control border rounded" placeholder="توضیحات را وارد کنید" />
+                    <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
 
                 <div class="form-group">
                     <label>تصویر اصلی</label>
-                    <input type="file" name="MainImage" class="form-control border rounded" />
+                    <input asp-for="MainImage" id="MainImage" type="file" class="form-control border rounded" />
                     @if (!string.IsNullOrEmpty(Model.MainImagePath))
                     {
                         <img src="~/@Model.MainImagePath" style="max-width:200px; margin-top:10px;" />
                     }
+                    <input type="hidden" name="MainImageSize" id="MainImageSize" value="0" />
                 </div>
 
                 <div class="form-group">
                     <label>تصویر فرعی</label>
-                    <input type="file" name="SubImage" class="form-control border rounded" />
+                    <input asp-for="SubImage" id="SubImage" type="file" class="form-control border rounded" />
                     @if (!string.IsNullOrEmpty(Model.SubImagePath))
                     {
                         <img src="~/@Model.SubImagePath" style="max-width:200px; margin-top:10px;" />
                     }
+                    <input type="hidden" name="SubImageSize" id="SubImageSize" value="0" />
                 </div>
 
                 <br />
@@ -59,6 +63,7 @@
                     <input type="submit" value="ذخیره" class="btn btn-primary btn-block" />
                 </div>
             </form>
+
         </div>
     </div>
 
@@ -67,6 +72,11 @@
     </div>
 </div>
 
+
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+
+}
 }

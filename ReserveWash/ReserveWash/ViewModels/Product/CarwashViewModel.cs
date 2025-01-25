@@ -16,16 +16,14 @@
         [Required(ErrorMessage = "مکان کارواش الزامی است.")]
         [Display(Name = "مکان کارواش")]
         public string Address { get; set; }
-        [Required(ErrorMessage = "امتیاز الزامی است")]
-        [Display(Name = "امتیاز")]
-        public int Star { get; set; }
-
+        [Required(ErrorMessage = "فیلد الزامی است")]
+        [Display(Name = "درباره کارواش")]
+        public string Description { get; set; }
         [Display(Name = "تاریخ تاسیس")]
         public string? CreateDate { get; set; }
         [HiddenInput(DisplayValue = false)]
         public string? UserId { get; set; }
         [NotMapped]
-
         public IFormFile? MainImage { get; set; }
         [NotMapped]
         public IFormFile? SubImage { get; set; }

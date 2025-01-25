@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ReserveWash.ViewModels.Auth;
@@ -11,7 +12,6 @@ namespace ReserveWash.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-
         public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
@@ -20,6 +20,7 @@ namespace ReserveWash.Controllers
 
         // GET: /Account/Register
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Register()
         {
             return View();
@@ -28,6 +29,7 @@ namespace ReserveWash.Controllers
         // POST: /Account/Register
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
@@ -49,6 +51,8 @@ namespace ReserveWash.Controllers
 
         // GET: /Account/Login
         [HttpGet]
+        [AllowAnonymous]
+
         public IActionResult Login()
         {
             return View();
@@ -57,6 +61,7 @@ namespace ReserveWash.Controllers
         // POST: /Account/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (ModelState.IsValid)
@@ -90,6 +95,7 @@ namespace ReserveWash.Controllers
 
         // GET: /Account/Logout
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
